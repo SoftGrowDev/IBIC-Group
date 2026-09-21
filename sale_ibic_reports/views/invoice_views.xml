@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- Invoice Form – Shipping & Reports tab                              -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <record id="invoice_form_ibic_inherit" model="ir.ui.view">
+    <field name="name">account.move.form.ibic.reports</field>
+    <field name="model">account.move</field>
+    <field name="inherit_id" ref="account.view_move_form"/>
+    <field name="arch" type="xml">
+
+      <xpath expr="//notebook" position="inside">
+        <page string="Shipping Info" name="ibic_shipping"
+              invisible="move_type not in ['out_invoice', 'out_refund']">
+
+          <!-- ── Transport Details ──────────────────────────────────── -->
+          <group string="Transport Details" col="6">
+            <field name="inv_country_of_origin_id" colspan="2"/>
+            <field name="inv_board_date"            colspan="2"/>
+            <field name="inv_carriage_by"           colspan="2"/>
+            <field name="inv_port_of_loading"       colspan="2"/>
+            <field name="inv_port_of_discharge"     colspan="2"/>
+            <field name="inv_waybill_no"            colspan="2"/>
+            <field name="inv_incoterm_id"           colspan="2"/>
+            <field name="inv_container_lta"         colspan="2"/>
+            <field name="inv_place_of_delivery"     colspan="2"/>
+          </group>
+
+          <!-- ── Packing List ───────────────────────────────────────── -->
+          <group string="Packing List" col="2">
+            <field name="inv_bl_number"/>
+          </group>
+
+          <field name="inv_packing_line_ids" nolabel="1">
+            <list editable="bottom">
+              <field name="sequence"           widget="handle"/>
+              <field name="container_no"/>
+              <field name="item_description"/>
+              <field name="origin_country_id"/>
+              <field name="qty_cartons"/>
+              <field name="unit_weight_kg"/>
+              <field name="tare_per_carton"/>
+              <field name="total_net_weight"   readonly="1"/>
+              <field name="total_gross_weight" readonly="1"/>
+            </list>
+          </field>
+
+          <group col="3">
+            <field name="inv_total_cartons"      readonly="1"/>
+            <field name="inv_total_net_weight"   readonly="1"/>
+            <field name="inv_total_gross_weight" readonly="1"/>
+          </group>
+
+          <!-- ── Invoice Notes ──────────────────────────────────────── -->
+          <group string="Invoice Notes" col="2">
+            <field name="inv_payment_note" colspan="2"/>
+            <field name="inv_conditions"/>
+            <field name="inv_terms" colspan="2"/>
+          </group>
+
+          <!-- ── Bank Details ───────────────────────────────────────── -->
+          <!-- Header row with "Reload from Company" button -->
+          <div style="margin: 8px 0 4px 0; display:flex; align-items:center; gap:10px;">
+            <strong>Bank Details</strong>
+            <button name="action_fill_bank_from_company"
+                    string="↺ Reload from Company"
+                    type="object"
+                    class="btn btn-secondary btn-sm"
+                    confirm="This will overwrite the current bank details with the company defaults. Continue?"/>
+          </div>
+
+          <group col="4">
+            <field name="inv_bank_name"        colspan="2"/>
+            <field name="inv_bank_branch"      colspan="2"/>
+            <field name="inv_bank_beneficiary" colspan="2"/>
+            <field name="inv_bank_account"     colspan="2"/>
+            <field name="inv_bank_iban"        colspan="2"/>
+            <field name="inv_bank_swift"       colspan="2"/>
+            <field name="inv_bank_tel"/>
+            <field name="inv_bank_fax"/>
+            <field name="inv_bank_address"     colspan="4"/>
+          </group>
+
+          <!-- ── Signature / Stamp Images ───────────────────────────── -->
+          <group string="Signature &amp; Stamp" col="2">
+            <field name="inv_shipper_stamp"  widget="image" colspan="1" options="{'size': [200, 120]}" string="Shipper Stamp"/>
+            <field name="inv_buyer_stamp"    widget="image" colspan="1" options="{'size': [200, 120]}" string="Buyer Stamp"/>
+          </group>
+
+        </page>
+      </xpath>
+
+      <!-- Add container and origin columns to invoice lines -->
+      <xpath expr="//field[@name='invoice_line_ids']//list//field[@name='quantity']" position="after">
+        <field name="invl_container_no" optional="hide"/>
+        <field name="invl_origin_country_id" optional="hide"/>
+        <field name="invl_unit_weight_kg" optional="hide"/>
+        <field name="invl_total_net_weight" optional="hide" readonly="1"/>
+        <field name="invl_total_gross_weight" optional="hide" readonly="1"/>
+      </xpath>
+
+    </field>
+  </record>
+
+</odoo>

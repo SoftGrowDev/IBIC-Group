@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_cheque_deposit_form" model="ir.ui.view">
+        <field name="name">account.cheque.deposit.form</field>
+        <field name="model">account.cheque.deposit</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="date"/>
+                    <field name="account_id"/>
+                </group>
+                <footer>
+                    <button string="Deposit" class="btn-primary" name="action_deposit" type="object" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_cheques_deposit" model="ir.actions.act_window">
+        <field name="name">Deposit</field>
+        <field name="res_model">account.cheque.deposit</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

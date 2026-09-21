@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*-
+{
+    'name': "Account Cheque Life Cycle Management",
+    'summary': """""",
+    'description': """""",
+    'author': " For IT Solutions",
+    'category': 'Accounting',
+    'version': '1.0',
+    'depends': ['base', 'accountant', 'sale_management', 'contacts'],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/account_cheque_security.xml',
+        'data/account_cheque_data.xml',
+        'wizard/account_cheque_report_views.xml',
+        'wizard/account_cheque_bank_collect_views.xml',
+        'wizard/account_cheque_return_views.xml',
+        'wizard/account_cheque_deposit_views.xml',
+        'wizard/account_cheque_transfer_views.xml',
+        'wizard/account_cheque_return_customer_views.xml',
+        'wizard/account_cheque_cash_views.xml',
+        'views/account_cheque_views.xml',
+        'views/res_config_settings_views.xml',
+        'report/report_account_cheques.xml',
+        'report/report_account_cheque.xml',
+    ],
+    'license': 'OPL-1',
+    'auto_install': True,
+}

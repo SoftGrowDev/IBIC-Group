@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit Sale Order Form: add smart buttons for Project and Analytic Account -->
+    <record id="sale_order_form_inherit_auto_project" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.auto.project</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart Buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+
+                <button
+                    name="action_open_project"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-tasks"
+                    invisible="not project_id"
+                    string="Project">
+                    <field name="project_id" widget="many2one_avatar" invisible="1"/>
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Project</span>
+                        <span class="o_stat_value">
+                            <field name="project_id" readonly="1" nolabel="1"/>
+                        </span>
+                    </div>
+                </button>
+
+                <button
+                    name="action_open_analytic_account"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-bar-chart"
+                    invisible="not analytic_account_id"
+                    string="Analytic">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Analytic</span>
+                        <span class="o_stat_value">
+                            <field name="analytic_account_id" readonly="1" nolabel="1"/>
+                        </span>
+                    </div>
+                </button>
+
+            </xpath>
+
+            <!-- Add Project & Analytic fields in the "Other Info" tab -->
+            <xpath expr="//notebook" position="inside">
+                <page name="analytic" string="Analytic">
+                    <group>
+                        <group string="Project &amp; Analytic" name="group_project_analytic">
+                            <field name="project_id" readonly="1"/>
+                            <field name="analytic_account_id" readonly="1"/>
+                        </group>
+                        <group>
+
+                        </group>
+                    </group>
+
+                </page>
+
+
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

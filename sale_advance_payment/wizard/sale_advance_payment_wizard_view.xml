@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_sale_advance_payment_wizard_form" model="ir.ui.view">
+            <field name="name">sale.advance.payment.wizard.form</field>
+            <field name="model">sale.advance.payment.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Register Advance Payment">
+                    <group>
+                        <group string="Order Info">
+                            <field name="sale_order_id" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                        </group>
+                        <group string="Payment Details">
+                            <field name="journal_id" required="1"/>
+                            <field name="currency_id"/>
+                            <field name="amount" required="1"/>
+                            <field name="payment_date" required="1"/>
+                            <field name="memo"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_make_payment"
+                                string="Make Payment"
+                                type="object"
+                                class="btn-primary"/>
+                        <button string="Cancel"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

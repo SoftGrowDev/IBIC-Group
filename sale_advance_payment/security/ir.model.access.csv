@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_advance_payment_user,sale.advance.payment.user,model_sale_advance_payment,,1,1,1,0
+access_sale_advance_payment_manager,sale.advance.payment.manager,model_sale_advance_payment,,1,1,1,1
+access_sale_advance_payment_wizard_user,sale.advance.payment.wizard.user,model_sale_advance_payment_wizard,,1,1,1,1
+access_sale_advance_payment_wizard_manager,sale.advance.payment.wizard.manager,model_sale_advance_payment_wizard,,1,1,1,1

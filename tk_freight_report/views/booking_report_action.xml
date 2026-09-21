@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ── Report Action ─────────────────────────────────────────── -->
+        <record id="action_shipping_declaration_booking_report" model="ir.actions.report">
+            <field name="name">Shipping Declaration</field>
+            <field name="model">shipment.freight.booking</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">tk_freight_report.shipping_declaration_booking</field>
+            <field name="report_file">tk_freight_report.shipping_declaration_booking</field>
+            <field name="binding_model_id" ref="tk_freight.model_shipment_freight_booking"/>
+            <field name="paperformat_id" ref="tk_freight.freight_paper_format"/>
+            <field name="binding_type">report</field>
+        </record>
+
+    </data>
+</odoo>

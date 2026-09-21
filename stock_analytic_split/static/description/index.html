@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Stock Analytic Distribution</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2d8659;
+            border-bottom: 3px solid #2d8659;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2d8659;
+            margin-top: 30px;
+        }
+        .feature {
+            background: #f0f8f5;
+            border-left: 4px solid #2d8659;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #2d8659;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .steps {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .steps ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .steps li {
+            margin: 10px 0;
+        }
+        .badge {
+            background: #2d8659;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>📦 Stock Analytic Distribution</h1>
+    <p><span class="badge">Odoo 19</span> <span class="badge">LGPL-3</span></p>
+    
+    <p>
+        Bring the power of analytic accounting directly to your stock transfers.
+        Split costs across multiple analytic accounts — the same way you do on invoices.
+        Now with <strong>auto-sync from Purchase Orders and Sales Orders</strong> — analytic is pulled automatically from the source document.
+    </p>
+
+    <h2>✨ Key Features</h2>
+
+    <div class="feature">
+        <h3>🎯 Analytic Widget on Move Lines</h3>
+        <p>The native <code>analytic_distribution</code> widget appears on every product line in your transfer form — exactly like invoice lines.</p>
+    </div>
+
+    <div class="feature">
+        <h3>🔄 Auto-Sync from PO / SO Lines</h3>
+        <p>Each stock move inherits the analytic from the matching PO or SO line automatically. Field is <strong>locked</strong> when linked to a source document to ensure data integrity.</p>
+    </div>
+
+    <div class="feature">
+        <h3>✏️ Manual Entry for Standalone Transfers</h3>
+        <p>Internal transfers and receipts with no PO/SO remain fully editable — set cost center manually per line or via the header field.</p>
+    </div>
+
+    <div class="feature">
+        <h3>✅ Auto Analytic Lines on Validate</h3>
+        <p>When you validate a transfer, analytic lines are automatically created for each distribution percentage on every done move.</p>
+    </div>
+
+    <div class="feature">
+        <h3>🔗 Full Stock Traceability</h3>
+        <p>Analytic lines are linked back to <code>stock.move</code> and <code>stock.picking</code> for full operational traceability.</p>
+    </div>
+
+    <div class="feature">
+        <h3>🌍 Multi-Plan Support</h3>
+        <p>Supports multiple analytic plans and percentage splits simultaneously.</p>
+    </div>
+
+    <h2>🚀 How It Works</h2>
+
+    <div class="steps">
+        <ol>
+            <li><strong>Set Analytic on PO/SO Line</strong> — In your Purchase Order or Sales Order, set the Analytic Distribution on each product line (requires Analytic Accounting enabled in Settings).</li>
+            <li><strong>Confirm the Order</strong> — Odoo creates the linked receipt or delivery automatically.</li>
+            <li><strong>Analytic Auto-Applied</strong> — Open the receipt/delivery and find the analytic already filled from the source document. Field is locked.</li>
+            <li><strong>Validate</strong> — Click Validate. Analytic lines are created automatically per distribution.</li>
+            <li><strong>Standalone Transfers</strong> — For transfers without PO/SO, set the analytic manually on the header or per line and validate normally.</li>
+        </ol>
+    </div>
+
+    <h2>📊 Example Scenarios</h2>
+
+    <h3>Scenario 1: Project Tracking</h3>
+    <p>
+        <strong>Purchase Order:</strong> Buy 100 units of Product A for Project X<br>
+        <strong>PO Line Analytic:</strong> Project X (100%)<br>
+        <strong>Result:</strong> Receipt auto-creates with Project X analytic locked → Validate → Analytic line: Project X, -$1,000
+    </p>
+
+    <h3>Scenario 2: Split Between Departments</h3>
+    <p>
+        <strong>Purchase Order:</strong> Buy 50 units shared between departments<br>
+        <strong>PO Line Analytic:</strong> Department A (60%), Department B (40%)<br>
+        <strong>Result:</strong> Receipt has split analytic → Validate → Two analytic lines: Dept A -$600, Dept B -$400
+    </p>
+
+    <h3>Scenario 3: Internal Transfer</h3>
+    <p>
+        <strong>Transfer:</strong> Move inventory between warehouses<br>
+        <strong>Manual Analytic:</strong> Set on picking header or per line<br>
+        <strong>Result:</strong> Validate → Analytic lines created with your manual distribution
+    </p>
+
+    <h2>🔧 Technical Details</h2>
+
+    <ul>
+        <li>Auto-sync uses <code>stock.move.purchase_line_id</code> and <code>stock.move.sale_line_id</code> to match move → order line</li>
+        <li>Works safely with or without <code>sale_stock</code> module installed</li>
+        <li>Header analytic stored as <strong>JSON</strong> in <code>stock.picking.analytic_distribution</code></li>
+        <li>Per-line analytic uses <code>stock.move.analytic_distribution</code></li>
+        <li>Cost source uses <code>stock_valuation_layer_ids.value</code>; falls back to <code>standard_price × qty</code></li>
+        <li>Analytic lines created only for moves in 'done' state</li>
+    </ul>
+
+    <h2>📦 Installation</h2>
+
+    <ol>
+        <li>Install the module from Apps menu</li>
+        <li>Enable Analytic Accounting in Accounting → Configuration → Settings</li>
+        <li>Create your Analytic Accounts in Accounting → Configuration → Analytic Accounts</li>
+        <li>Start using on Purchase Orders, Sales Orders, and Stock Transfers!</li>
+    </ol>
+
+    <h2>👤 Author</h2>
+    <p>
+        <strong>Haytham Afify</strong><br>
+        Email: haythamgamal6@gmail.com<br>
+        GitHub: <a href="https://github.com/haythamafify">github.com/haythamafify</a>
+    </p>
+
+    <h2>📄 License</h2>
+    <p>LGPL-3</p>
+
+    <h2>🔄 Changelog</h2>
+    <h3>Version 19.0.1.0.0</h3>
+    <ul>
+        <li>✅ Upgraded to Odoo 19</li>
+        <li>✅ Updated API compatibility</li>
+        <li>✅ Compatible with Odoo 19 analytic distribution widget</li>
+        <li>✅ No breaking changes - fully backward compatible</li>
+    </ul>
+</body>
+</html>

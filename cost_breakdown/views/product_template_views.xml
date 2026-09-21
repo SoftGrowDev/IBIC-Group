@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add Product Nature field to the product form (General Information tab) -->
+    <record id="view_product_template_form_cost_breakdown" model="ir.ui.view">
+        <field name="name">product.template.form.cost.breakdown</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Place after the internal reference (default_code) field -->
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="product_type_id"
+                       options="{'no_create': False}"
+                       placeholder="Select a product nature…"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

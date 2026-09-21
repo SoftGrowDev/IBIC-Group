@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_cheque_bank_collect_form" model="ir.ui.view">
+        <field name="name">account.cheque.bank.collect.form</field>
+        <field name="model">account.cheque.bank.collect</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="date"/>
+                    <field name="is_outgoing" invisible="True"/>
+                    <field name="account_id" invisible="is_outgoing" required="not is_outgoing"/>
+                    <field name="bank_account_id" invisible="not is_outgoing" required="is_outgoing"/>
+                </group>
+                <footer>
+                    <button string="Collect" class="btn-primary" name="action_collect" type="object" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_cheques_bank_collect" model="ir.actions.act_window">
+        <field name="name">Bank Collect</field>
+        <field name="res_model">account.cheque.bank.collect</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+

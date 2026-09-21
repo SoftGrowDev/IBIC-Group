@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- Company form – add IBIC Bank Details section                      -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <record id="res_company_form_ibic_inherit" model="ir.ui.view">
+    <field name="name">res.company.form.ibic.bank</field>
+    <field name="model">res.company</field>
+    <field name="inherit_id" ref="base.view_company_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//notebook" position="inside">
+        <page string="IBIC Bank Defaults" name="ibic_bank_defaults">
+          <group string="Default Bank Details (copied to every new Sale Order)">
+            <group col="2">
+              <field name="ibic_bank_name"/>
+              <field name="ibic_bank_branch"/>
+              <field name="ibic_bank_beneficiary"/>
+              <field name="ibic_bank_account"/>
+              <field name="ibic_bank_iban"/>
+              <field name="ibic_bank_swift"/>
+              <field name="ibic_bank_tel"/>
+              <field name="ibic_bank_fax"/>
+            </group>
+            <group col="1">
+              <field name="ibic_bank_address"/>
+            </group>
+          </group>
+          <group string="Shipper Stamp &amp; Signature (printed on Proforma Invoice)">
+            <field name="ibic_shipper_stamp" widget="image"
+                   options="{'size': [240, 140]}" nolabel="1"/>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+
+</odoo>

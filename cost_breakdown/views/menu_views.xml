@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_cost_breakdown_root"
+              name="Estimated Cost Breakdowns"
+              parent="sale.sale_order_menu"
+              action="cost_breakdown.action_cost_breakdown"
+              sequence="25"/>
+
+    <menuitem id="menu_product_type_config"
+              name="Product Natures"
+              parent="stock.menu_stock_config_settings"
+              action="cost_breakdown.action_product_type"
+              sequence="50"/>
+
+</odoo>

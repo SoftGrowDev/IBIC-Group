@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add "Unit Kind" to the Units &amp; Packagings list -->
+    <record id="view_uom_uom_list_ibic_kind" model="ir.ui.view">
+        <field name="name">uom.uom.list.ibic.kind</field>
+        <field name="model">uom.uom</field>
+        <field name="inherit_id" ref="uom.product_uom_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="ibic_uom_kind" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add "Unit Kind" to the Unit of Measure form -->
+    <record id="view_uom_uom_form_ibic_kind" model="ir.ui.view">
+        <field name="name">uom.uom.form.ibic.kind</field>
+        <field name="model">uom.uom</field>
+        <field name="inherit_id" ref="uom.product_uom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="ibic_uom_kind"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

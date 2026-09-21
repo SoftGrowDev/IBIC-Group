@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="shipping_declaration_booking">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.basic_layout">
+                        <div class="page" style="font-family: 'Times New Roman', Times, serif; font-size: 12px; padding: 10px;">
+
+                            <!-- ══ HEADER: Logo top-left ══ -->
+                            <table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
+                                <tr>
+                                    <td style="width:30%; vertical-align:top; padding:0;">
+                                        <t t-if="o.company_id.logo">
+                                            <img t-att-src="image_data_uri(o.company_id.logo)"
+                                                 alt="Logo"
+                                                 style="max-width:180px; max-height:90px;"/>
+                                        </t>
+                                    </td>
+                                    <td style="width:70%; vertical-align:top; padding:0;">
+                                        <!-- Decorative squares top-right (mimicking the PDF) -->
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- ══ TITLE ══ -->
+                            <div style="text-align:center; margin-bottom:20px;">
+                                <span style="font-size:18px; font-weight:bold; text-decoration:underline;">
+                                    Shipping Declaration
+                                </span>
+                            </div>
+
+                            <!-- ══ MAIN BORDERED TABLE ══ -->
+                            <table style="width:100%; border-collapse:collapse; border:1px solid black;">
+
+                                <!-- Row 1: Alexandria in / On Vessel -->
+                                <tr style="border-bottom:1px solid black;">
+                                    <td colspan="2" style="padding:4px 8px; border:1px solid black;">
+                                        <table style="width:100%; border-collapse:collapse;">
+                                            <tr>
+                                                <td style="width:50%; font-style:italic; font-weight:bold;">
+                                                    Alexandria in:
+                                                    <span style="font-weight:normal; font-style:normal;">
+                                                        <t t-if="o.declaration_date">
+                                                            <span t-field="o.declaration_date"/>
+                                                        </t>
+                                                    </span>
+                                                </td>
+                                                <td style="width:50%; font-style:italic; font-weight:bold;">
+                                                    On Vessel :
+                                                    <span style="font-weight:normal; font-style:normal;">
+                                                        <t t-if="o.vessel_id"><span t-field="o.vessel_id"/></t>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-style:italic; font-weight:bold;">
+                                                    Attn :
+                                                    <span style="font-weight:normal; font-style:normal;">
+                                                        <t t-if="o.agent_id"><span t-field="o.agent_id"/></t>
+                                                    </span>
+                                                </td>
+                                                <td style="font-style:italic; font-weight:bold;">
+                                                    Rate Agreed :
+                                                    <span style="font-weight:normal; font-style:normal;">
+                                                        <t t-if="o.approx_charges">
+                                                            <span t-field="o.approx_charges"/>
+                                                        </t>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-style:italic; font-weight:bold;">
+                                                    POL :
+                                                    <span style="font-weight:normal; font-style:normal;">
+                                                        <t t-if="o.address_to == 'location_address' and o.source_location_id">
+                                                            <span t-field="o.source_location_id"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-field="o.s_city"/>
+                                                        </t>
+                                                    </span>
+                                                </td>
+                                                <td style="font-style:italic; font-weight:bold;">
+                                                    POD :
+                                                    <span style="font-weight:normal; font-style:normal;">
+                                                        <t t-if="o.address_to == 'location_address' and o.destination_location_id">
+                                                            <span t-field="o.destination_location_id"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-field="o.d_city"/>
+                                                        </t>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 2: SHIPPER -->
+                                <tr style="border-bottom:1px solid black;">
+                                    <td style="width:18%; padding:8px; border-right:1px solid black; vertical-align:top; font-style:italic; font-weight:bold;">
+                                        Shipper :
+                                    </td>
+                                    <td style="padding:8px; vertical-align:top;">
+                                        <t t-if="o.shipper_id">
+                                            <span style="font-weight:bold; font-style:italic;">Company name /</span>
+                                            <span t-field="o.shipper_id.name"/><br/>
+                                            <span style="font-weight:bold; font-style:italic;">Address /</span>
+                                            <t t-if="o.shipper_id.street"><span t-field="o.shipper_id.street"/></t>
+                                            <t t-if="o.shipper_id.street2"> <span t-field="o.shipper_id.street2"/></t>
+                                            <t t-if="o.shipper_id.city"> - <span t-field="o.shipper_id.city"/></t>
+                                            <t t-if="o.shipper_id.country_id"> - <span t-field="o.shipper_id.country_id"/></t>
+                                            <br/>
+                                            <t t-if="o.shipper_id.phone">
+                                                <span style="font-weight:bold; font-style:italic;">Phone /</span>
+                                                <span t-field="o.shipper_id.phone"/><br/>
+                                            </t>
+                                            <t t-if="o.shipper_id.email">
+                                                <span style="font-weight:bold; font-style:italic;">Email /</span>
+                                                <span t-field="o.shipper_id.email"/>
+                                            </t>
+                                        </t>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 3: CONSIGNEE -->
+                                <tr style="border-bottom:1px solid black;">
+                                    <td style="width:18%; padding:8px; border-right:1px solid black; vertical-align:top; font-style:italic; font-weight:bold;">
+                                        Consignee :
+                                    </td>
+                                    <td style="padding:8px; vertical-align:top;">
+                                        <t t-if="o.consignee_id">
+                                            <span style="font-weight:bold; font-style:italic;">Company name /</span>
+                                            <span t-field="o.consignee_id.name"/><br/>
+                                            <span style="font-weight:bold; font-style:italic;">Address /</span>
+                                            <t t-if="o.consignee_id.street"><span t-field="o.consignee_id.street"/></t>
+                                            <t t-if="o.consignee_id.street2"> <span t-field="o.consignee_id.street2"/></t>
+                                            <t t-if="o.consignee_id.city"> - <span t-field="o.consignee_id.city"/></t>
+                                            <t t-if="o.consignee_id.country_id"> - <span t-field="o.consignee_id.country_id"/></t>
+                                        </t>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 4: NOTIFY -->
+                                <tr style="border-bottom:1px solid black;">
+                                    <td style="width:18%; padding:8px; border-right:1px solid black; vertical-align:top; font-style:italic; font-weight:bold;">
+                                        Notify:
+                                    </td>
+                                    <td style="padding:8px; vertical-align:top;">
+                                        <t t-if="o.first_notify_id">
+                                            <strong><span t-field="o.first_notify_id.name"/></strong><br/>
+                                            <t t-if="o.first_notify_id.street">
+                                                <span t-field="o.first_notify_id.street"/><br/>
+                                            </t>
+                                            <t t-if="o.first_notify_id.street2">
+                                                <span t-field="o.first_notify_id.street2"/><br/>
+                                            </t>
+                                            <t t-if="o.first_notify_id.city">
+                                                <span t-field="o.first_notify_id.city"/>
+                                            </t>
+                                            <t t-if="o.first_notify_id.country_id">
+                                                , <span t-field="o.first_notify_id.country_id"/><br/>
+                                            </t>
+                                            <t t-if="o.first_notify_id.phone">
+                                                TEL: <span t-field="o.first_notify_id.phone"/><br/>
+                                            </t>
+                                            <t t-if="o.first_notify_id.email">
+                                                EMAIL: <span t-field="o.first_notify_id.email"/>
+                                            </t>
+                                        </t>
+                                        <t t-if="o.second_notify_id">
+                                            <br/>
+                                            <strong><span t-field="o.second_notify_id.name"/></strong><br/>
+                                            <t t-if="o.second_notify_id.street">
+                                                <span t-field="o.second_notify_id.street"/><br/>
+                                            </t>
+                                            <t t-if="o.second_notify_id.phone">
+                                                TEL: <span t-field="o.second_notify_id.phone"/>
+                                            </t>
+                                        </t>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 5: Column Headers for Cargo -->
+                                <tr style="border-bottom:1px solid black; background:#fff;">
+                                    <td style="padding:6px 8px; border-right:1px solid black; font-style:italic; font-weight:bold; text-align:center; vertical-align:middle;">
+                                        Cntrs. No.
+                                    </td>
+                                    <td style="padding:0;">
+                                        <table style="width:100%; border-collapse:collapse;">
+                                            <tr>
+                                                <td style="padding:6px 8px; border-right:1px solid black; font-style:italic; font-weight:bold; text-align:center; width:75%;">
+                                                    PACKING &amp; DESCRIPTION OF GOODS
+                                                </td>
+                                                <td style="padding:6px 8px; font-style:italic; font-weight:bold; text-align:center; width:25%;">
+                                                    Weight
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 6: Cargo Data -->
+                                <tr>
+                                    <td style="padding:8px; border-right:1px solid black; vertical-align:top; text-align:center;">
+                                        <t t-if="o.no_of_containers">
+                                            <span t-field="o.no_of_containers"/>
+                                        </t>
+                                        <t t-if="o.container_size">
+                                            <br/><span t-field="o.container_size"/>
+                                        </t>
+                                        <t t-if="o.container_type">
+                                            <br/><span t-field="o.container_type"/>
+                                        </t>
+                                    </td>
+                                    <td style="padding:0;">
+                                        <table style="width:100%; border-collapse:collapse;">
+                                            <tr>
+                                                <td style="padding:8px; border-right:1px solid black; vertical-align:top; width:75%;">
+                                                    <t t-if="o.cargo_desc">
+                                                        <span t-field="o.cargo_desc"/>
+                                                        <br/>
+                                                    </t>
+                                                    <t t-if="o.commodity">
+                                                        <span t-field="o.commodity"/>
+                                                        <br/>
+                                                    </t>
+                                                    <t t-if="o.hs_code">
+                                                        HS Code: <span t-field="o.hs_code"/><br/>
+                                                    </t>
+                                                    <t t-if="o.mask_numbers">
+                                                        <span t-field="o.mask_numbers"/>
+                                                    </t>
+                                                </td>
+                                                <td style="padding:8px; vertical-align:top; text-align:center; width:25%;">
+                                                    <t t-if="o.gross_weight">
+                                                        <strong><span t-field="o.gross_weight"/></strong>
+                                                        <br/><strong>G.W</strong><br/><br/>
+                                                    </t>
+                                                    <t t-if="o.total_weight">
+                                                        <strong><span t-field="o.total_weight"/> N.W</strong>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                            </table>
+                            <!-- END MAIN TABLE -->
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

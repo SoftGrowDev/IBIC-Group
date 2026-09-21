@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ── Proforma Invoice ── -->
+  <record id="action_report_ibic_proforma" model="ir.actions.report">
+    <field name="name">Proforma Invoice (IBIC)</field>
+    <field name="model">sale.order</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">sale_ibic_reports.proforma_invoice_document</field>
+    <field name="report_file">sale_ibic_reports.proforma_invoice_document</field>
+    <field name="print_report_name">'Proforma_Invoice_%s' % object.name</field>
+    <field name="paperformat_id" ref="paperformat_ibic_a4"/>
+    <field name="binding_model_id" ref="sale.model_sale_order"/>
+    <field name="binding_type">report</field>
+  </record>
+
+  <!-- ── Packing List ── -->
+<!--  <record id="action_report_ibic_packing" model="ir.actions.report">-->
+<!--    <field name="name">Packing List (IBIC)</field>-->
+<!--    <field name="model">sale.order</field>-->
+<!--    <field name="report_type">qweb-pdf</field>-->
+<!--    <field name="report_name">sale_ibic_reports.packing_list_document</field>-->
+<!--    <field name="report_file">sale_ibic_reports.packing_list_document</field>-->
+<!--    <field name="print_report_name">'Packing_List_%s' % object.name</field>-->
+<!--    <field name="paperformat_id" ref="paperformat_ibic_a4"/>-->
+<!--    <field name="binding_model_id" ref="sale.model_sale_order"/>-->
+<!--    <field name="binding_type">report</field>-->
+<!--  </record>-->
+
+</odoo>

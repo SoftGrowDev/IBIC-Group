@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_stock_picking_packing_list_report" model="ir.actions.report">
+    <field name="name">Delivery Order - Packing List</field>
+    <field name="model">stock.picking</field>
+    <field name="report_type">qweb-html</field>
+    <field name="report_name">sale_ibic_reports.stock_picking_packing_list_document</field>
+    <field name="report_file">sale_ibic_reports.stock_picking_packing_list_document</field>
+    <field name="binding_model_id" ref="stock.model_stock_picking"/>
+    <field name="binding_type">report</field>
+    <field name="paperformat_id" ref="paperformat_ibic_a4_landscape"/>
+  </record>
+
+</odoo>

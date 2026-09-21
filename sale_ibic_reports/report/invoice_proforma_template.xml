@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="invoice_proforma_document">
+<t t-call="web.html_container">
+<t t-foreach="docs" t-as="o">
+<div class="page" style="
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color: #1a1a1a;
+    padding: 6px 10px;
+    line-height: 1.35;
+">
+
+<!-- HEADER: Title left  |  Logo + IBIC INTERNATIONAL TRADING inline right -->
+<table width="100%" style="border-collapse:collapse; margin-bottom:6px;">
+  <tr>
+    <td style="width:55%; vertical-align:middle;">
+      <span style="font-size:18px; font-weight:bold; color:#ffffff; background:#2e7d32; padding:4px 12px; display:inline-block;">Proforma Invoice</span>
+    </td>
+    <td style="width:45%; text-align:right; vertical-align:middle;">
+      <table style="border-collapse:collapse; display:inline-table; float:right;">
+        <tr>
+          <td style="vertical-align:middle;">
+            <t t-if="o.company_id.logo">
+              <img t-att-src="image_data_uri(o.company_id.logo)"
+                   style="max-height:55px; max-width:150px; display:block;" alt=""/>
+            </t>
+          </td>
+          <td style="vertical-align:middle; padding-left:6px;">
+            <span style="font-size:9px; font-weight:bold; color:#2e7d32; letter-spacing:0.4px; white-space:nowrap;">IBIC INTERNATIONAL TRADING</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<!-- Invoice date -->
+<div style="font-size:10px; margin-bottom:6px;">
+  <strong>Invoice/Bill Date:</strong><br/>
+  <t t-esc="o.invoice_date.strftime('%d/%m/%Y') if o.invoice_date else ''"/>
+</div>
+
+<!-- SHIPPER | BUYER -->
+<table width="100%" style="border-collapse:collapse; margin-bottom:8px; font-size:8.5px;">
+  <tr style="vertical-align:top;">
+
+    <!-- SHIPPER -->
+    <td style="width:50%; padding-right:8px; border-right:1px solid #ccc;">
+      <div style="color:#2e7d32; font-size:8.5px; margin-bottom:3px; font-weight:bold;">Shipper/Consigner</div>
+      <table style="border-collapse:collapse; width:100%;">
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Company Name :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.company_id.name"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px; color:#2e7d32;">Commercial Registration :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.company_id.company_registry or ''"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Tax Registration :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.company_id.vat or ''"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Contact Person :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.invoice_user_id.name if o.invoice_user_id else ''"/>
+        </tr>
+        <tr>
+          <td style="font-size:8.5px; white-space:nowrap; vertical-align:top; font-weight:bold; padding-right:2px;">Address :</td>
+          <td style="font-size:8.5px;">
+            <t t-esc="' '.join(filter(None, [o.company_id.street or '', o.company_id.street2 or '']))"/>
+          </td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">City, State, ZIP :</td>
+          <td style="font-size:8.5px;">
+            <t t-esc="', '.join(filter(None, [o.company_id.city or '', (o.company_id.state_id.name or ''), (o.company_id.zip or '')]))"/>
+          </td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Country :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.company_id.country_id.name or ''"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Phone :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.company_id.phone or ''"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Email :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.company_id.email or ''"/>
+        </tr>
+      </table>
+    </td>
+
+    <!-- BUYER -->
+    <td style="width:50%; padding-left:8px;">
+      <div style="color:#2e7d32; font-size:8.5px; margin-bottom:3px; font-weight:bold;">Buyer/Consignee</div>
+      <table style="border-collapse:collapse; width:100%;">
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Company Name :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.partner_id.commercial_partner_id.name"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">OGRN :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;"></td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">INN / KPP :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.partner_id.vat or ''"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Contact Person :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.partner_id.name if o.partner_id != o.partner_id.commercial_partner_id else ''"/>
+        </tr>
+        <tr>
+          <td style="font-size:8.5px; white-space:nowrap; vertical-align:top; font-weight:bold; padding-right:2px;">Address :</td>
+          <td style="font-size:8.5px;">
+            <t t-esc="' '.join(filter(None, [o.partner_id.street or '', o.partner_id.street2 or '']))"/>
+          </td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">City, State, ZIP :</td>
+          <td style="font-size:8.5px;">
+            <t t-esc="', '.join(filter(None, [o.partner_id.city or '', (o.partner_id.state_id.name or ''), (o.partner_id.zip or '')]))"/>
+          </td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Country :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.partner_id.country_id.name or ''"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Phone :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.partner_id.phone or ''"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; font-size:8.5px; padding-right:2px;">Email :</td>
+          <td style="white-space:nowrap; font-weight:bold;font-size:8.5px;" t-esc="o.partner_id.email or ''"/>
+        </tr>
+      </table>
+    </td>
+
+  </tr>
+</table>
+
+<!-- SHIPPING INFO — borderless, camelCase labels, left-aligned, no uppercase -->
+<table width="100%" style="border-collapse:collapse; margin-bottom:8px; font-size:8.5px;">
+  <tr>
+    <td style="width:34%; padding:3px 8px 3px 0; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Country of Origin :</span><br/>
+      <t t-esc="o.inv_country_of_origin_id.name if o.inv_country_of_origin_id else ''"/>
+    </td>
+    <td style="width:33%; padding:3px 8px; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Boarding Date :</span><br/>
+      <t t-esc="o.inv_board_date.strftime('%d/%m/%Y') if o.inv_board_date else ''"/>
+    </td>
+    <td style="width:33%; padding:3px 0 3px 8px; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Carriage By :</span><br/>
+      <t t-esc="o.inv_carriage_by or ''"/>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:3px 8px 3px 0; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Port of Loading :</span><br/>
+      <t t-esc="o.inv_port_of_loading or ''"/>
+    </td>
+    <td style="padding:3px 8px; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Port of Discharge :</span><br/>
+      <t t-esc="o.inv_port_of_discharge or ''"/>
+    </td>
+    <td style="padding:3px 0 3px 8px; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Waybill No. :</span><br/>
+      <t t-esc="o.inv_waybill_no or ''"/>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:3px 8px 3px 0; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Inco Terms :</span><br/>
+      <t t-if="o.inv_incoterm_id">
+        <t t-esc="o.inv_incoterm_id.code"/>&#160;<t t-esc="o.inv_incoterm_id.name"/>
+      </t>
+    </td>
+    <td style="padding:3px 8px; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Container / LTA :</span><br/>
+      <t t-esc="o.inv_container_lta or ''"/>
+    </td>
+    <td style="padding:3px 0 3px 8px; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold;">Place of Delivery :</span><br/>
+      <t t-esc="o.inv_place_of_delivery or ''"/>
+    </td>
+  </tr>
+</table>
+
+<!-- PRODUCT TABLE -->
+<table width="100%" style="border-collapse:collapse; margin-bottom:8px; font-size:8.5px;">
+  <thead>
+    <tr style="background:#2e7d32; color:#fff;">
+      <th style="padding:4px 5px; text-align:left;   border:1px solid #2e7d32; width:34%;">DESCRIPTION OF PRODUCT</th>
+      <th style="padding:4px 5px; text-align:center; border:1px solid #2e7d32; width:12%;">Ton Price</th>
+      <th style="padding:4px 5px; text-align:center; border:1px solid #2e7d32; width:12%;">Carton Price</th>
+      <th style="padding:4px 5px; text-align:center; border:1px solid #2e7d32; width:16%;">QTY Total Net weight/Ton</th>
+      <th style="padding:4px 5px; text-align:center; border:1px solid #2e7d32; width:12%;">QTY Total Cartons</th>
+      <th style="padding:4px 5px; text-align:right;  border:1px solid #2e7d32; width:14%;">TOTAL Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <t t-foreach="o.invoice_line_ids" t-as="line">
+      <tr>
+        <td style="padding:4px 5px; border:1px solid #ddd;">
+          <t t-esc="line.product_id.name or line.name"/>
+          <t t-if="line.product_id.description_sale">
+            <br/><small style="color:#555;" t-esc="line.product_id.description_sale"/>
+          </t>
+        </td>
+        <td style="padding:4px 5px; text-align:center; border:1px solid #ddd;">
+          <t t-set="ton_price" t-value="line.price_unit if line.product_uom_id and 'ton' in (line.product_uom_id.name or '').lower() else line.price_unit * 1000 if line.product_uom_id else line.price_unit * 100"/>
+          <t t-esc="'$ {:,.0f}'.format(ton_price)"/>
+        </td>
+        <td style="padding:4px 5px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="'$ {:,.2f}'.format(ton_price / 100)"/>
+        </td>
+        <td style="padding:4px 5px; text-align:center; border:1px solid #ddd;">
+          <t t-if="line.product_uom_id">
+            <t t-esc="'{:,.3f}'.format(line.quantity / 1000)"/>
+          </t>
+          <t t-else="">
+            <t t-esc="'{:,.2f}'.format(line.quantity * 10 / 1000)"/>
+          </t>
+        </td>
+        <td style="padding:4px 5px; text-align:center; border:1px solid #ddd;">
+          <t t-if="line.product_uom_id">
+            <t t-esc="'{:,.0f}'.format(line.quantity / 1000 * 100)"/>
+          </t>
+          <t t-else="">
+            <t t-esc="'{:,.0f}'.format(line.quantity)"/>
+          </t>
+        </td>
+        <td style="padding:4px 5px; text-align:right; border:1px solid #ddd;">
+          <t t-esc="'$ {:,.0f}'.format(line.price_subtotal)"/>
+        </td>
+      </tr>
+    </t>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5" style="padding:4px 5px; font-weight:bold; text-align:right; background:#f0f0f0; border:1px solid #ccc;">Total</td>
+      <td style="padding:4px 5px; font-weight:bold; text-align:right; background:#f0f0f0; border:1px solid #ccc;">
+        <t t-esc="'$ {:,.0f}'.format(o.amount_total)"/>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- BOTTOM BLOCK -->
+<table width="100%" style="border-collapse:collapse; font-size:9.5px; margin-bottom:10px;">
+  <tr style="vertical-align:top;">
+    <td style="width:50%; padding-right:10px;">
+      <div style="margin-bottom:5px;">
+        <span style="color:#2e7d32; font-weight:bold; text-decoration:underline;">Amount In Words:</span><br/>
+        <t t-esc="o.inv_amount_in_words or ''"/>
+      </div>
+      <div style="margin-bottom:5px;">
+        <span style="color:#2e7d32; font-weight:bold;">Payment Term:</span>
+        <span t-esc="o.invoice_payment_term_id.name if o.invoice_payment_term_id else ''"/>
+      </div>
+      <div style="margin-bottom:5px;">
+        <span style="color:#2e7d32; font-weight:bold;">Conditions:</span>
+        <span t-esc="o.inv_conditions or ''"/>
+      </div>
+      <t t-if="o.inv_terms">
+        <div>
+          <span style="color:#2e7d32; font-weight:bold;">Terms &amp; Condition:</span><br/>
+          <span t-esc="o.inv_terms"/>
+        </div>
+      </t>
+    </td>
+    <td style="width:50%; padding-left:10px; border-left:1px solid #ddd;">
+      <div style="margin-bottom:5px;">
+        <span style="color:#2e7d32; font-weight:bold; text-decoration:underline;">Invoice Number:</span><br/>
+        <span t-esc="o.name"/>
+      </div>
+      <t t-if="o.inv_bank_name">
+        <div>
+          <span style="color:#2e7d32; font-weight:bold;">Bank Details:</span><br/>
+          <strong>Bank Name:</strong> <span t-esc="o.inv_bank_name"/><br/>
+          <t t-if="o.inv_bank_branch"><span t-esc="o.inv_bank_branch"/><br/></t>
+          <strong>Beneficiary:</strong> <span t-esc="o.inv_bank_beneficiary or ''"/><br/>
+          <t t-if="o.inv_bank_account"><strong>Account Number :</strong> <span t-esc="o.inv_bank_account"/><br/></t>
+          <t t-if="o.inv_bank_iban"><strong>IBAN:</strong> <span t-esc="o.inv_bank_iban"/><br/></t>
+          <t t-if="o.inv_bank_swift"><strong>SWIFT Code:</strong> <span t-esc="o.inv_bank_swift"/><br/></t>
+          <t t-if="o.inv_bank_tel"><strong>Tel:</strong> <span t-esc="o.inv_bank_tel"/><br/></t>
+          <t t-if="o.inv_bank_fax"><strong>Fax:</strong> <span t-esc="o.inv_bank_fax"/><br/></t>
+          <t t-if="o.inv_bank_address"><strong>Address:</strong> <span t-esc="o.inv_bank_address"/><br/></t>
+        </div>
+      </t>
+    </td>
+  </tr>
+</table>
+
+<!-- SIGNATURE / STAMP -->
+<table width="100%" style="border-collapse:collapse; font-size:9.5px; margin-top:18px;">
+  <tr>
+    <td style="width:48%; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold; text-decoration:underline;">Shipper Signature &amp; Stamp:</span>
+      <t t-if="o.inv_shipper_stamp">
+        <br/>
+        <img t-att-src="image_data_uri(o.inv_shipper_stamp)"
+             style="max-height:80px; max-width:180px; margin-top:4px;" alt=""/>
+      </t>
+      <t t-else="">
+        <div style="margin-top:30px; border-top:1px solid #999; width:100%;"/>
+      </t>
+    </td>
+    <td style="width:4%;"/>
+    <td style="width:48%; vertical-align:top;">
+      <span style="color:#2e7d32; font-weight:bold; text-decoration:underline;">Buyer Signature &amp; Stamp:</span>
+      <t t-if="o.inv_buyer_stamp">
+        <br/>
+        <img t-att-src="image_data_uri(o.inv_buyer_stamp)"
+             style="max-height:80px; max-width:180px; margin-top:4px;" alt=""/>
+      </t>
+      <t t-else="">
+        <div style="margin-top:30px; border-top:1px solid #999; width:100%;"/>
+      </t>
+    </td>
+  </tr>
+</table>
+
+</div>
+</t>
+</t>
+</template>
+</odoo>

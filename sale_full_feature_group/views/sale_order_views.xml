@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. Odoo core — sale.view_order_form -->
+    <record id="sfg_core_sale_order" model="ir.ui.view">
+        <field name="name">sale.order.form.sfg.core</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//button[@name='action_view_invoice']" position="attributes">
+                <attribute name="invisible">invoice_count == 0 or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@id='create_invoice']" position="attributes">
+                <attribute name="invisible">invoice_status != 'to invoice' or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@id='create_invoice_percentage']" position="attributes">
+                <attribute name="invisible">invoice_status != 'no' or state != 'sale' or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@id='send_proforma_primary']" position="attributes">
+                <attribute name="invisible">state != 'draft' or invoice_count >= 1 or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@id='send_proforma']" position="attributes">
+                <attribute name="invisible">state == 'draft' or invoice_count >= 1 or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//header/button[@name='action_cancel'][1]" position="attributes">
+                <attribute name="invisible">state not in ('draft', 'sent', 'sale') or not id or locked or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//header/button[@name='action_cancel'][2]" position="attributes">
+                <attribute name="invisible">state not in ('draft', 'sent', 'sale') or not id or locked or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_lock']" position="attributes">
+                <attribute name="invisible">locked or state != 'sale' or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_unlock']" position="attributes">
+                <attribute name="invisible">not locked or not is_full_feature_user</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- 2. sales_order_double_approval -->
+    <record id="sfg_double_approval" model="ir.ui.view">
+        <field name="name">sale.order.form.sfg.double.approval</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sales_order_double_approval.view_order_form"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//button[@name='button_approve']" position="attributes">
+                <attribute name="invisible">state != 'to_approve' or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
+                <attribute name="invisible">not is_full_feature_user</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- 3. cost_breakdown -->
+    <record id="sfg_cost_breakdown" model="ir.ui.view">
+        <field name="name">sale.order.form.sfg.cost.breakdown</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="cost_breakdown.view_sale_order_form_cost_breakdown"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//button[@name='action_view_cost_breakdowns']" position="attributes">
+                <attribute name="invisible">cost_breakdown_count == 0 or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_create_cost_breakdown']" position="attributes">
+                <attribute name="invisible">state == 'cancel' or (not is_full_feature_user and state not in ('draft', 'sent', 'to_approve'))</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- 4. sale_project_auto -->
+    <record id="sfg_sale_project_auto" model="ir.ui.view">
+        <field name="name">sale.order.form.sfg.project.auto</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_project_auto.sale_order_form_inherit_auto_project"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//button[@name='action_open_project']" position="attributes">
+                <attribute name="invisible">not project_id or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_open_analytic_account']" position="attributes">
+                <attribute name="invisible">not analytic_account_id or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//page[@name='analytic']" position="attributes">
+                <attribute name="invisible">not is_full_feature_user</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- 5. sale_advance_payment -->
+    <record id="sfg_sale_advance_payment" model="ir.ui.view">
+        <field name="name">sale.order.form.sfg.advance.payment</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_advance_payment.view_sale_order_form_advance_payment"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//button[@name='action_register_advance_payment']" position="attributes">
+                <attribute name="invisible">state not in ('sale', 'done') or not is_full_feature_user</attribute>
+            </xpath>
+
+            <xpath expr="//page[@name='advance_payment_tab']" position="attributes">
+                <attribute name="invisible">state not in ('sale', 'done') or not is_full_feature_user</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- 6. sale_order_documents -->
+    <record id="sfg_sale_order_documents" model="ir.ui.view">
+        <field name="name">sale.order.form.sfg.documents</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_order_documents.view_order_form_documents"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='sale_documents']" position="attributes">
+                <attribute name="invisible">not is_full_feature_user</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="stock_picking_packing_list_document">
+<t t-call="web.html_container">
+<t t-foreach="docs" t-as="o">
+<div class="page" style="
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #1a1a1a;
+    padding: 0;
+    line-height: 1.6;
+">
+
+<!-- ═══════ HEADER — full-width blue (unchanged) ═══════ -->
+<table width="100%" style="border-collapse:collapse; margin:0; background:#1f6394;">
+  <tr>
+    <td style="padding:12px 18px; vertical-align:middle; width:60%;">
+      <span style="font-size:22px; font-weight:bold; color:#ffffff; letter-spacing:0.5px;">
+        Delivery Order - Packing List
+      </span>
+    </td>
+    <td style="padding:10px 18px; vertical-align:middle; text-align:right; width:40%;">
+      <table style="border-collapse:collapse; display:inline-table; float:right;">
+        <tr>
+          <td style="vertical-align:middle; padding-right:10px;">
+            <t t-if="o.company_id.logo">
+              <img t-att-src="image_data_uri(o.company_id.logo)"
+                   style="max-height:54px; max-width:140px; display:block;
+                          background:#fff; border-radius:3px; padding:3px;" alt=""/>
+            </t>
+          </td>
+          <td style="vertical-align:middle; text-align:left;">
+            <span style="font-size:11px; font-weight:bold; color:#ffffff; display:block;">IBIC</span>
+            <span style="font-size:9px; color:#d6eaf8; display:block;">INTERNATIONAL</span>
+            <span style="font-size:9px; color:#d6eaf8; display:block;">TRADING</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<!-- ═══════ DATE LINE ═══════ -->
+<div style="font-size:12px; font-weight:bold; color:#1f6394; padding:8px 18px 6px 18px;">
+  Date: <span style="font-weight:normal; color:#1a1a1a;">
+    <t t-esc="o.scheduled_date.strftime('%d/%m/%Y') if o.scheduled_date else ''"/>
+  </span>
+</div>
+
+<!-- ═══════ SHIPPER+BUYER (left) | CARRIER+SHIPMENT (right) ═══════ -->
+<t t-set="unit_label" t-value="'LB' if o.sp_print_type == 'lb' else 'KG'"/>
+<t t-set="factor"     t-value="2.20462 if o.sp_print_type == 'lb' else 1.0"/>
+<t t-set="sol"        t-value="o.sale_id"/>
+
+<table width="100%" style="border-collapse:collapse; margin:0 0 10px 0; font-size:11px;
+                            border:1px solid #aac9e0;">
+  <tr style="vertical-align:top;">
+
+    <!-- ── LEFT: Shipper + Buyer stacked ── -->
+    <td style="width:52%; padding:0; border-right:1px solid #aac9e0;">
+
+      <!-- Shipper -->
+      <div style="background:#d6eaf8; color:#1f6394; font-weight:bold; font-size:11px;
+                  padding:3px 8px; border-bottom:1px solid #aac9e0;">
+        Shipper/Consigner
+      </div>
+      <div style="padding:4px 8px; font-size:11px; line-height:1.7; border-bottom:1px solid #aac9e0;">
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Company Name:</span>
+          <span style="font-weight:bold;" t-esc="o.company_id.name"/>
+        </div>
+        <t t-set="s_addr" t-value="', '.join(filter(None,[o.company_id.street or '',o.company_id.street2 or '',o.company_id.city or '',o.company_id.country_id.name or '']))"/>
+        <t t-if="s_addr">
+          <div style="display:flex; align-items:baseline; padding:1px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Address:</span>
+            <span t-esc="s_addr"/>
+          </div>
+        </t>
+        <t t-if="o.company_id.phone">
+          <div style="display:flex; align-items:baseline; padding:1px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Phone:</span>
+            <span t-esc="o.company_id.phone"/>
+          </div>
+        </t>
+        <t t-if="o.company_id.email">
+          <div style="display:flex; align-items:baseline; padding:1px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Email:</span>
+            <span t-esc="o.company_id.email"/>
+          </div>
+        </t>
+      </div>
+
+      <!-- Buyer -->
+      <div style="background:#d6eaf8; color:#1f6394; font-weight:bold; font-size:11px;
+                  padding:3px 8px; border-bottom:1px solid #aac9e0;">
+        Buyer/Consignee
+      </div>
+      <div style="padding:4px 8px; font-size:11px; line-height:1.7;">
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Company Name:</span>
+          <span style="font-weight:bold;" t-esc="o.partner_id.commercial_partner_id.name"/>
+        </div>
+        <t t-set="b_addr" t-value="', '.join(filter(None,[o.partner_id.street or '',o.partner_id.street2 or '',o.partner_id.city or '',o.partner_id.country_id.name or '']))"/>
+        <t t-if="b_addr">
+          <div style="display:flex; align-items:baseline; padding:1px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Address:</span>
+            <span t-esc="b_addr"/>
+          </div>
+        </t>
+        <t t-if="o.partner_id.phone">
+          <div style="display:flex; align-items:baseline; padding:1px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Phone:</span>
+            <span t-esc="o.partner_id.phone"/>
+          </div>
+        </t>
+        <t t-if="o.partner_id.email">
+          <div style="display:flex; align-items:baseline; padding:1px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Email:</span>
+            <span t-esc="o.partner_id.email"/>
+          </div>
+        </t>
+      </div>
+    </td>
+
+    <!-- ── RIGHT: Carrier Details + Shipment Details stacked ── -->
+    <td style="width:48%; padding:0; vertical-align:top;">
+
+      <!-- Carrier Details -->
+      <div style="background:#d6eaf8; color:#1f6394; font-weight:bold; font-size:11px;
+                  padding:3px 8px; border-bottom:1px solid #aac9e0;">
+        CARRIER DETAILS
+      </div>
+      <div style="padding:4px 8px; font-size:11px; border-bottom:1px solid #aac9e0; line-height:1.8;">
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Carrier Line:</span>
+          <span t-esc="sol.so_carriage_by.name if sol and sol.so_carriage_by else ''"/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Vessel:</span>
+          <span/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Voyage No.:</span>
+          <span t-esc="sol.so_waybill_no if sol else ''"/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Agent:</span>
+          <span/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">P.O.L.:</span>
+          <span t-esc="sol.so_port_of_loading.name if sol and sol.so_port_of_loading else ''"/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">P.O.D.:</span>
+          <span t-esc="sol.so_port_of_discharge.name if sol and sol.so_port_of_discharge else ''"/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">ETD:</span>
+          <span t-esc="sol.so_board_date.strftime('%d/%m/%Y') if sol and sol.so_board_date else ''"/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">ETA:</span>
+          <span t-esc="o.date_deadline.strftime('%d/%m/%Y') if o.date_deadline else ''"/>
+        </div>
+      </div>
+
+      <!-- Shipment Details -->
+      <div style="background:#d6eaf8; color:#1f6394; font-weight:bold; font-size:11px;
+                  padding:3px 8px; border-bottom:1px solid #aac9e0;">
+        SHIPMENT DETAILS
+      </div>
+      <div style="padding:4px 8px; font-size:11px; line-height:1.8;">
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">BKD.NO (Booked Number):</span>
+          <span t-esc="o.sp_bl_number or ''"/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Container Type:</span>
+          <span t-esc="dict([('reefer','Reefer'),('non_reefer','Non-Reefer')]).get(o.sp_container_type,'')"/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Print Type:</span>
+          <span t-esc="unit_label"/>
+        </div>
+        <div style="display:flex; align-items:baseline; padding:1px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:6px;">Transfer:</span>
+          <span t-esc="o.name"/>
+        </div>
+      </div>
+
+    </td>
+  </tr>
+</table>
+
+<!-- ═══════ PACKING LINES TABLE ═══════ -->
+<table width="100%" style="border-collapse:collapse; margin-bottom:10px; font-size:10.5px;">
+  <thead>
+    <tr style="background:#1f6394; color:#fff;">
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:9%;">Container No.</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:22%;">Commodity (NAME)</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:7%;">UOM</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:6%;">QTY</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:5%;">KG or LB</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:8%;">Container Type</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:7%;">No. of Cartons</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:9%;">Weight/Carton (<t t-esc="unit_label"/>)</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:13%;">Carton N.W. (<t t-esc="unit_label"/>)</th>
+      <th style="padding:6px 5px; text-align:center; border:1px solid #155080; width:14%;">Carton G.W. (<t t-esc="unit_label"/>)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <t t-foreach="o.sp_packing_line_ids" t-as="line">
+      <t t-set="cw_kg" t-value="line.product_id.product_tmpl_id.pkg_carton_weight_kg_id.value or 0.0"/>
+      <tr>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;" t-esc="line.container_no or ''"/>
+        <td style="padding:5px; text-align:left;   border:1px solid #ddd;" t-esc="line.product_id.name or ''"/>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;" t-esc="line.uom_id.name or ''"/>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;"><t t-esc="'{:,.3f}'.format(line.qty)"/></td>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;" t-esc="unit_label"/>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="dict([('reefer','Reefer'),('non_reefer','Non-Reefer')]).get(o.sp_container_type,'')"/>
+        </td>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;" t-esc="line.qty_cartons"/>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="'{:,.2f}'.format(cw_kg * factor)"/>
+        </td>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="'{:,.2f}'.format(line.nw_kg * factor)"/>
+        </td>
+        <td style="padding:5px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="'{:,.2f}'.format(line.gw_kg * factor)"/>
+        </td>
+      </tr>
+    </t>
+  </tbody>
+  <!-- Totals row -->
+  <tfoot>
+    <tr style="background:#f4f9fd; font-weight:bold;">
+      <td colspan="6" style="padding:5px; border:1px solid #aac9e0;"/>
+      <td style="padding:5px; text-align:center; border:1px solid #aac9e0;">
+        <t t-esc="o.sp_total_qty_cartons"/>
+      </td>
+      <td style="padding:5px; border:1px solid #aac9e0;"/>
+      <td style="padding:5px; text-align:center; border:1px solid #aac9e0;">
+        <t t-esc="'{:,.2f}'.format((o.sp_total_nw_lb if o.sp_print_type == 'lb' else o.sp_total_nw_kg))"/>
+      </td>
+      <td style="padding:5px; text-align:center; border:1px solid #aac9e0;">
+        <t t-esc="'{:,.2f}'.format((o.sp_total_gw_lb if o.sp_print_type == 'lb' else o.sp_total_gw_kg))"/>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- ═══════ BOTTOM: PALLETS (left) | TOTALS (right) ═══════ -->
+<table width="100%" style="border-collapse:collapse; font-size:11px;">
+  <tr style="vertical-align:top;">
+
+    <!-- Left: Pallets summary -->
+    <td style="width:50%; padding-right:10px;">
+      <table style="border-collapse:collapse; font-size:11px; line-height:2.0;">
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">TOTAL PALLETS No.:</td>
+          <td style="color:#1f6394; font-weight:bold;" t-esc="o.sp_total_pallets"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Wood Pallets:</td>
+          <td t-esc="o.sp_total_wood_pallets"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Plastic Pallets:</td>
+          <td t-esc="o.sp_total_plastic_pallets"/>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Total Qty (TON):</td>
+          <td t-esc="'{:,.3f}'.format(o.sp_total_qty_ton)"/>
+        </tr>
+      </table>
+    </td>
+
+    <!-- Right: Carton/NW/GW totals -->
+    <td style="width:50%; padding-left:10px;">
+      <table width="100%" style="border-collapse:collapse; font-size:11px;">
+        <tr style="background:#1f6394; color:#fff;">
+          <td colspan="2" style="padding:5px 10px; font-weight:bold; text-align:center; font-size:12px;">
+            Totals
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:4px 10px; border-bottom:1px solid #e0e0e0; font-weight:bold;">Total Cartons:</td>
+          <td style="padding:4px 10px; border-bottom:1px solid #e0e0e0; text-align:right;
+                     font-weight:bold; color:#1f6394;" t-esc="o.sp_total_qty_cartons"/>
+        </tr>
+        <tr>
+          <td style="padding:4px 10px; border-bottom:1px solid #e0e0e0; font-weight:bold;">
+            Total N.W. (<t t-esc="unit_label"/>):
+          </td>
+          <td style="padding:4px 10px; border-bottom:1px solid #e0e0e0; text-align:right;
+                     font-weight:bold; color:#1f6394;">
+            <t t-esc="'{:,.2f}'.format((o.sp_total_nw_lb if o.sp_print_type == 'lb' else o.sp_total_nw_kg))"/>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:4px 10px; font-weight:bold;">
+            Total G.W. (<t t-esc="unit_label"/>):
+          </td>
+          <td style="padding:4px 10px; text-align:right; font-weight:bold; color:#1f6394;">
+            <t t-esc="'{:,.2f}'.format((o.sp_total_gw_lb if o.sp_print_type == 'lb' else o.sp_total_gw_kg))"/>
+          </td>
+        </tr>
+      </table>
+    </td>
+
+  </tr>
+</table>
+
+<!-- ═══════ AMOUNTS IN WORDS ═══════ -->
+<div style="font-size:11px; line-height:2.0; margin-top:10px;">
+  <div>
+    <strong style="color:#1f6394;">- Total Qty (TON):</strong>
+    <span t-esc="o._int_to_words(o.sp_total_qty_ton, 'Tons') + '.'"/>
+  </div>
+  <div>
+    <strong style="color:#1f6394;">- Total Net Weight:</strong>
+    <t t-if="o.sp_print_type == 'lb'">
+      <span t-esc="o._int_to_words(o.sp_total_nw_lb, 'Pounds') + '.'"/>
+    </t>
+    <t t-else="">
+      <span t-esc="o._int_to_words(o.sp_total_nw_kg, 'Kilograms') + '.'"/>
+    </t>
+  </div>
+  <div>
+    <strong style="color:#1f6394;">- Total Gross Weight:</strong>
+    <t t-if="o.sp_print_type == 'lb'">
+      <span t-esc="o._int_to_words(o.sp_total_gw_lb, 'Pounds') + '.'"/>
+    </t>
+    <t t-else="">
+      <span t-esc="o._int_to_words(o.sp_total_gw_kg, 'Kilograms') + '.'"/>
+    </t>
+  </div>
+</div>
+
+</div><!-- /page -->
+</t><!-- /foreach -->
+</t><!-- /html_container -->
+</template>
+</odoo>

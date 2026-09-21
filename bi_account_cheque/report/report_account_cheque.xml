@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="report_account_cheque" model="ir.actions.report">
+        <field name="name">Account Cheque</field>
+        <field name="model">account.cheque</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bi_account_cheque.report_account_cheque_template</field>
+        <field name="report_file">bi_account_cheque.report_account_cheque_template</field>
+        <field name="print_report_name">'Account Cheque - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_account_cheque"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_account_cheque_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <center>
+                            <h3><t t-esc="o.cheque_type.capitalize()"/> Cheque</h3>
+                        </center>
+
+                        <br/>
+                        
+                        <div class="row">
+                            <h5 t-field="o.name"/>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Bank: </strong>
+                                <span t-field="o.bank_id"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Payee: </strong>
+                                <span t-field="o.partner_id"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Cheque Number: </strong>
+                                <span t-field="o.cheque_number"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Date: </strong>
+                                <span t-field="o.date"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Amount: </strong>
+                                <span t-field="o.amount"/>
+                            </div>
+                            <div class="col-6">
+                                <t t-if="o.cheque_type == 'incoming'">
+                                    <strong>Cheque Receive Date: </strong>
+                                    <span t-field="o.cheque_receive_date"/>
+                                </t>
+                                <t t-else="">
+                                    <strong>Cheque Given Date: </strong>
+                                    <span t-field="o.cheque_given_date"/>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="row" t-if="o.state in (
+                            'bank_collect',
+                            'return',
+                            'deposit',
+                            'transfer',
+                            'return_to_customer',
+                            'cash'
+                        )">
+                            <div class="col-6">
+                                <t t-if="o.state == 'cash'">
+                                    <strong>Remaining Amount: </strong>
+                                    <span t-field="o.remaining_amount"/>
+                                </t>
+                            </div>
+                            <div class="col-6">
+                                <t t-if="o.state != 'cash'">
+                                    <strong>Cheque Return Date: </strong>
+                                    <span t-field="o.cheque_return_date"/>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="row" t-if="o.state == 'cash'">
+                            <div class="col-6">
+                                <strong>Finished Amount: </strong>
+                                <span t-field="o.finished_amount"/>
+                            </div>
+                            <div class="col-6"/>
+                        </div>
+
+                        <br/>
+
+                        <div class="row" t-if="o.description">
+                            <strong>Description: </strong>
+                            <br/>
+                            <span t-field="o.description"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

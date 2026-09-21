@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_type_user,product.type user,model_product_type,base.group_user,1,0,0,0
+access_product_type_manager,product.type manager,model_product_type,base.group_system,1,1,1,1
+access_product_type_sale_manager,product.type sale manager,model_product_type,sales_team.group_sale_manager,1,1,1,1
+access_cost_breakdown_user,cost.breakdown user,model_cost_breakdown,base.group_user,1,1,1,0
+access_cost_breakdown_manager,cost.breakdown manager,model_cost_breakdown,base.group_system,1,1,1,1
+access_cost_breakdown_sale_manager,cost.breakdown sale manager,model_cost_breakdown,sales_team.group_sale_manager,1,1,1,1
+access_cost_breakdown_line_user,cost.breakdown.line user,model_cost_breakdown_line,base.group_user,1,1,1,0
+access_cost_breakdown_line_manager,cost.breakdown.line manager,model_cost_breakdown_line,base.group_system,1,1,1,1

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Stock Move Form View - Add Analytic Distribution -->
+    <record id="view_move_form_analytic" model="ir.ui.view">
+        <field name="name">stock.move.form.analytic</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Analytic Distribution field -->
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="is_analytic_readonly" invisible="1"/>
+                <field name="analytic_distribution" widget="analytic_distribution"
+                       groups="analytic.group_analytic_accounting"
+                       readonly="is_analytic_readonly"
+                       options="{'product_field': 'product_id', 'account_field': False}"/>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <!-- Stock Picking Operations Tab - Add Analytic to Move Lines -->
+    <record id="view_picking_form_move_line_analytic" model="ir.ui.view">
+        <field name="name">stock.picking.form.move.line.analytic</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Analytic Distribution column in Operations tab -->
+            <xpath expr="//field[@name='move_ids']/list/field[@name='product_id']" position="after">
+                <field name="analytic_distribution" widget="analytic_distribution"
+                       groups="analytic.group_analytic_accounting"
+                       readonly="is_analytic_readonly"
+                       optional="hide"
+                       options="{'product_field': 'product_id'}"/>
+                <field name="is_analytic_readonly" column_invisible="1"/>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

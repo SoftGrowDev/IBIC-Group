@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="group_sale_full_feature" model="res.groups">
+        <field name="name">See Full Features – Sales</field>
+        <field name="comment">
+            Users with this group see all buttons, smart buttons, and tabs on
+            the Sale Order form. Without it, visibility is restricted to the
+            first 3 pages and a limited set of header buttons.
+        </field>
+    </record>
+
+</odoo>

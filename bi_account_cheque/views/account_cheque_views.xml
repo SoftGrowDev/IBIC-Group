@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- VIEWS -->
+
+    <record id="view_account_cheque_tree" model="ir.ui.view">
+        <field name="name">account.cheque.tree</field>
+        <field name="model">account.cheque</field>
+        <field name="arch" type="xml">
+            <list string="Account Cheques">
+                <field name="name"/>
+                <field name="bank_id"/>
+                <field name="cheque_number"/>
+                <field name="amount"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="cheque_return_date"/>
+                <field name="journal_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_cheque_reporting_tree" model="ir.ui.view">
+        <field name="name">account.cheque.reporting.tree</field>
+        <field name="model">account.cheque</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="view_account_cheque_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="create">0</attribute>
+                <attribute name="edit">0</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="cheque_type"/>
+            </xpath>
+
+            <xpath expr="//field[@name='date']" position="replace">
+                <field name="last_log_date"/>
+            </xpath>
+
+            <xpath expr="//field[@name='cheque_return_date']" position="replace">
+                <field name="last_log_account_id"/>
+            </xpath>
+
+            <xpath expr="//field[@name='state']" position="replace">
+                <field name="last_log_state"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_cheque_form" model="ir.ui.view">
+        <field name="name">account.cheque.form</field>
+        <field name="model">account.cheque</field>
+        <field name="arch" type="xml">
+            <form string="Account Cheque">
+                <header>
+                    <button name="action_register" string="Register" type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="%(action_account_cheques_bank_collect)d" string="Bank Collect" type="action"
+                            class="oe_highlight" invisible="state not in ('register', 'deposit')"/>
+                    <button name="%(action_account_cheques_return)d" string="Return" type="action"
+                            invisible="cheque_type == 'outgoing' or state != 'deposit'"/>
+                    <button name="%(action_account_cheques_deposit)d" string="Deposit" type="action"
+                            invisible="cheque_type == 'outgoing' or state not in ('register', 'return')"
+                            class="oe_highlight"/>
+                    <button name="%(action_account_cheques_transfer)d" string="Transfer" type="action"
+                            class="oe_highlight" invisible="cheque_type == 'outgoing' or state != 'register'"/>
+                    <button name="%(action_account_cheques_return_customer)d" string="Return To Customer" type="action"
+                            invisible="cheque_type == 'outgoing' or state != 'return'"/>
+                    <button name="%(action_account_cheques_cash)d" string="Cash" type="action" class="oe_highlight"
+                            invisible="state not in ('register', 'return', 'cash') or remaining_amount &lt;= 0.0"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state != 'register'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,register,bank_collect,cash"/>
+                </header>
+                <sheet>
+
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_view_payment_matching" string="Payment Matching" icon="fa-university"
+                                type="object" class="oe_stat_button" invisible="state == 'draft'"/>
+                        <button name="action_view_journal_items" icon="fa-bars" type="object"
+                                class="oe_stat_button" invisible="not journal_items_count">
+                            <field name="journal_items_count" widget="statinfo" string="Journal Items"/>
+                        </button>
+                        <button name="action_view_attachments" icon="fa-cloud-upload" type="object"
+                                class="oe_stat_button" invisible="not attachments_count">
+                            <field name="attachments_count" widget="statinfo" string="Attachments"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cheque_type" invisible="True"/>
+                            <field name="bank_id"/>
+                            <field name="cheque_number"/>
+                            <field name="amount"/>
+                            <field name="remaining_amount" invisible="state != 'cash'"/>
+                            <field name="finished_amount" invisible="state != 'cash'"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                            <field name="cheque_receive_date" invisible="cheque_type != 'incoming'"
+                                   required="cheque_type == 'incoming'"/>
+                            <field name="cheque_given_date" invisible="cheque_type != 'outgoing'"
+                                   required="cheque_type == 'outgoing'"/>
+                            <field name="cheque_return_date"
+                                   invisible="state in ('draft', 'register', 'cash', 'bounce', 'cancel')"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="credit_account_id"/>
+                            <field name="journal_id"/>
+                            <field name="return_reason" invisible="state != 'return'"/>
+                        </group>
+                        <group>
+                            <field name="debit_account_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="Add an internal note..."/>
+                        </page>
+                        <page string="Invoices">
+                            <field name="invoice_ids" domain="[('move_type', '!=', 'entry')]"/>
+                        </page>
+                        <page string="Attachments">
+                            <field name="attachment_ids"/>
+                        </page>
+                        <page name="cheque_log" string="Cheque Log">
+                            <field name="cheque_log_ids">
+                                <list create="0" edit="0">
+                                    <field name="account_cheque_id" column_invisible="True"/>
+                                    <field name="state"/>
+                                    <field name="date"/>
+                                    <field name="account_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            <chatter/>
+            </form>
+        </field>
+    </record>
+
+<!--    <record id="account_cheque_view_search" model="ir.ui.view">-->
+<!--        <field name="name">account.cheque.view.search</field>-->
+<!--        <field name="model">account.cheque</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <search string="Search Account Cheques">-->
+<!--                <field name="name"/>-->
+<!--                <field name="bank_id"/>-->
+<!--                <field name="cheque_number"/>-->
+<!--                <field name="partner_id"/>-->
+<!--                <field name="credit_account_id"/>-->
+<!--                <field name="debit_account_id"/>-->
+<!--                <field name="journal_id"/>-->
+<!--                <field name="company_id" groups="base.group_multi_company"/>-->
+<!--                <field name="return_reason"/>-->
+<!--                <field name="description"/>-->
+<!--                <field name="date"/>-->
+<!--                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>-->
+<!--                <filter string="Registered" name="register" domain="[('state', '=', 'register')]"/>-->
+<!--                <filter string="Bounced" name="bounce" domain="[('state', '=', 'bounce')]"/>-->
+<!--                <filter string="Bank Collected" name="bank_collect" domain="[('state', '=', 'bank_collect')]"/>-->
+<!--                <filter string="Returned" name="return" domain="[('state', '=', 'return')]"/>-->
+<!--                <filter string="Deposited" name="deposit" domain="[('state', '=', 'deposit')]"/>-->
+<!--                <filter string="Transferred" name="transfer" domain="[('state', '=', 'transfer')]"/>-->
+<!--                <filter string="Returned To Customer" name="return_to_customer"-->
+<!--                        domain="[('state', '=', 'return_to_customer')]"/>-->
+<!--                <filter string="Cashed" name="cash" domain="[('state', '=', 'cash')]"/>-->
+<!--                <filter string="Cancelled" name="cancel" domain="[('state', '=', 'cancel')]"/>-->
+<!--                <group expand="0" string="Group By">-->
+<!--                    <filter string="Status" name="state" domain="[]" context="{'group_by': 'state'}"/>-->
+<!--                    <filter string="Bank" name="bank" domain="[]" context="{'group_by': 'bank_id'}"/>-->
+<!--                    <filter string="Partner" name="partner" domain="[]" context="{'group_by': 'partner_id'}"/>-->
+<!--                    <filter string="Date" name="date" domain="[]" context="{'group_by': 'date'}"/>-->
+<!--                    <filter string="Cheque Given Date" name="cheque_given_date" domain="[]"-->
+<!--                            context="{'group_by': 'cheque_given_date'}"/>-->
+<!--                    <filter string="Cheque Receive Date" name="cheque_receive_date" domain="[]"-->
+<!--                            context="{'group_by': 'cheque_receive_date'}"/>-->
+<!--                    <filter string="Cheque Return Date" name="cheque_return_date" domain="[]"-->
+<!--                            context="{'group_by': 'cheque_return_date'}"/>-->
+<!--                    <filter string="Credit Account" name="credit_account_id" domain="[]"-->
+<!--                            context="{'group_by': 'credit_account_id'}"/>-->
+<!--                    <filter string="Debit Account" name="debit_account_id" domain="[]"-->
+<!--                            context="{'group_by': 'debit_account_id'}"/>-->
+<!--                    <filter string="Journal" name="journal" domain="[]" context="{'group_by': 'journal_id'}"/>-->
+<!--                    <filter string="Company" name="company" domain="[]" context="{'group_by': 'company_id'}"-->
+<!--                            groups="base.group_multi_company"/>-->
+<!--                </group>-->
+<!--            </search>-->
+<!--        </field>-->
+<!--    </record>-->
+
+    <!-- ACTIONS (WINDOW) -->
+
+    <record id="action_account_cheques_reporting" model="ir.actions.act_window">
+        <field name="name">Cheques Reporting</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.cheque</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="view_id" ref="bi_account_cheque.view_account_cheque_reporting_tree"/>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_incoming_account_cheques" model="ir.actions.act_window">
+        <field name="name">Incoming Account Cheques</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.cheque</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="bi_account_cheque.view_account_cheque_tree"/>
+        <field name="context">{'default_cheque_type': 'incoming'}</field>
+        <field name="domain">[('cheque_type', '=', 'incoming')]</field>
+    </record>
+
+    <record id="action_outgoing_account_cheques" model="ir.actions.act_window">
+        <field name="name">Outgoing Account Cheques</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.cheque</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="bi_account_cheque.view_account_cheque_tree"/>
+        <field name="context">{'default_cheque_type': 'outgoing'}</field>
+        <field name="domain">[('cheque_type', '=', 'outgoing')]</field>
+    </record>
+
+    <!-- MENU ITEMS -->
+
+    <menuitem id="account_cheques_menu"
+              name="Cheques Management"
+              parent="accountant.menu_accounting"
+
+              groups="bi_account_cheque.group_show_cheque_menu"
+              sequence="5">
+        <menuitem id="incoming_account_cheques_menu"
+                  action="action_incoming_account_cheques"
+                  sequence="1"/>
+        <menuitem id="outgoing_account_cheques_menu"
+                  action="action_outgoing_account_cheques"
+                  sequence="2"/>
+        <menuitem id="menu_account_cheques_reporting"
+                  name="Reporting"
+                  sequence="3">
+            <menuitem id="account_cheques_reporting_menu"
+                      name="Cheques"
+                      action="action_account_cheques_reporting"
+                      sequence="1"/>
+        </menuitem>
+    </menuitem>
+</odoo>

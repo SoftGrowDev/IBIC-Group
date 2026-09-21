@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_analytic_line_report_wizard"
+            model="ir.ui.view">
+        <field name="name">analytic.line.report.wizard.form</field>
+        <field name="model">analytic.line.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Analytic Report">
+
+                <group>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </group>
+
+                <footer>
+                    <button name="action_print_pdf"
+                            type="object"
+                            string="Print PDF"
+                            class="btn-primary"/>
+
+                    <button name="action_export_xlsx"
+                            type="object"
+                            string="Open Lines"
+                            class="btn-secondary"/>
+
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="action_analytic_line_report_wizard"
+            model="ir.actions.act_window">
+        <field name="name">Analytic USD Report</field>
+        <field name="res_model">analytic.line.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+<!--    <menuitem id="menu_analytic_usd_report"-->
+<!--              name="Analytic USD Report"-->
+<!--              parent="account.menu_finance_reports"-->
+<!--              action="action_analytic_line_report_wizard"/>-->
+</odoo>

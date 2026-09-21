@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="packing_list_document">
+<t t-call="web.html_container">
+<t t-foreach="docs" t-as="o">
+<div class="page" style="
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color: #1a1a1a;
+    padding: 6px 10px;
+    line-height: 1.35;
+">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HEADER: Logo left + Title centred                              -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<table width="100%" style="border-collapse:collapse; margin-bottom:10px;">
+  <tr>
+    <td style="width:25%; vertical-align:middle;">
+      <t t-if="o.company_id.logo">
+        <img t-att-src="image_data_uri(o.company_id.logo)"
+             style="max-height:60px; max-width:120px;" alt=""/>
+      </t>
+    </td>
+    <td style="width:50%; text-align:center; vertical-align:middle;">
+      <div style="font-size:20px; font-weight:bold; color:#1f6394; letter-spacing:1px;">Packing List</div>
+    </td>
+    <td style="width:25%;"/>
+  </tr>
+</table>
+
+<!-- Date + B/L No -->
+<div style="text-align:center; margin-bottom:10px; font-size:10px; font-weight:bold; color:#1f6394;">
+  <div>Date: <t t-esc="o.date_order.strftime('%d.%m.%Y') if o.date_order else ''"/></div>
+  <div>Bill of Lading No.: <t t-esc="o.so_bl_number or '-'"/></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SHIPPER  |  BUYER                                              -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<table width="100%" style="border-collapse:collapse; margin-bottom:12px; font-size:9.5px; border:1px solid #aac9e0;">
+  <tr style="vertical-align:top;">
+
+    <!-- SHIPPER -->
+    <td style="width:50%; padding:8px 10px; border-right:1px solid #aac9e0;">
+      <div style="color:#1f6394; font-weight:bold; font-size:10.5px; margin-bottom:4px;">Shipper/Consigner:</div>
+      <div><strong>Company Name:</strong> <span t-esc="o.company_id.name"/></div>
+      <t t-if="o.company_id.vat">
+        <div><strong>Tax Card:</strong> <span t-esc="o.company_id.vat"/></div>
+      </t>
+      <div>
+        <strong>Address:</strong>
+        <span t-esc="' '.join(filter(None, [o.company_id.street or '', o.company_id.street2 or '']))"/>
+        <t t-if="o.company_id.city">, <span t-esc="o.company_id.city"/></t>
+        <t t-if="o.company_id.zip">, <span t-esc="o.company_id.zip"/></t>
+      </div>
+      <t t-if="o.company_id.country_id">
+        <div><span t-esc="o.company_id.country_id.name"/></div>
+      </t>
+      <t t-if="o.company_id.phone">
+        <div><strong>Phone:</strong> <span t-esc="o.company_id.phone"/></div>
+      </t>
+      <t t-if="o.company_id.email">
+        <div><strong>Email:</strong> <span t-esc="o.company_id.email"/></div>
+      </t>
+    </td>
+
+    <!-- BUYER -->
+    <td style="width:50%; padding:8px 10px;">
+      <div style="color:#1f6394; font-weight:bold; font-size:10.5px; margin-bottom:4px;">Buyer/Consignee :</div>
+      <div><strong>Company Name:</strong> <span t-esc="o.partner_id.commercial_partner_id.name"/></div>
+      <div>
+        <strong>Address:</strong>
+        <span t-esc="' '.join(filter(None, [o.partner_id.street or '', o.partner_id.street2 or '']))"/>
+        <t t-if="o.partner_id.city">, <span t-esc="o.partner_id.city"/></t>
+        <t t-if="o.partner_id.zip">, <span t-esc="o.partner_id.zip"/></t>
+      </div>
+      <t t-if="o.partner_id.country_id">
+        <div><span t-esc="o.partner_id.country_id.name"/></div>
+      </t>
+      <t t-if="o.partner_id.phone">
+        <div><strong>Phone:</strong> <span t-esc="o.partner_id.phone"/></div>
+      </t>
+      <t t-if="o.partner_id.email">
+        <div><strong>Email:</strong> <span t-esc="o.partner_id.email"/></div>
+      </t>
+    </td>
+
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- CONTAINER / PACKING TABLE - FROM ORDER LINES                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<table width="100%" style="border-collapse:collapse; margin-bottom:10px; font-size:9.5px;">
+  <thead>
+    <tr style="color:#1f6394; font-weight:bold; border-bottom:2px solid #1f6394; border-top:2px solid #1f6394;">
+      <th style="padding:5px 6px; text-align:center; border:1px solid #aac9e0; background:#d6eaf8;">Container No.</th>
+      <th style="padding:5px 6px; text-align:center; border:1px solid #aac9e0; background:#d6eaf8;">Item</th>
+      <th style="padding:5px 6px; text-align:center; border:1px solid #aac9e0; background:#d6eaf8;">Origin</th>
+      <th style="padding:5px 6px; text-align:center; border:1px solid #aac9e0; background:#d6eaf8;">Quantity</th>
+      <th style="padding:5px 6px; text-align:center; border:1px solid #aac9e0; background:#d6eaf8;">Unit Weight<br/>(Kg)</th>
+      <th style="padding:5px 6px; text-align:center; border:1px solid #aac9e0; background:#d6eaf8;">Total Net<br/>Weight (Kg)</th>
+      <th style="padding:5px 6px; text-align:center; border:1px solid #aac9e0; background:#d6eaf8;">Total Gross<br/>Weight (Kg)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <t t-set="total_qty" t-value="0"/>
+    <t t-set="total_net" t-value="0"/>
+    <t t-set="total_gross" t-value="0"/>
+    
+    <t t-foreach="o.order_line" t-as="line">
+      <t t-if="not line.display_type">
+      <tr>
+        <td style="padding:5px 6px; text-align:center; border:1px solid #ddd;"
+            t-esc="line.sol_container_no or ''"/>
+        <td style="padding:5px 6px; text-align:center; border:1px solid #ddd;">
+          <span t-esc="line.product_id.name or line.name"/>
+        </td>
+        <td style="padding:5px 6px; text-align:center; border:1px solid #ddd;"
+            t-esc="line.sol_origin_country_id.name if line.sol_origin_country_id else (o.so_country_of_origin_id.name if o.so_country_of_origin_id else '')"/>
+        <td style="padding:5px 6px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="'{:,.0f}'.format(line.product_uom_qty)"/>
+        </td>
+        <td style="padding:5px 6px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="'{:.2f}'.format(line.sol_unit_weight_kg)"/>
+        </td>
+        <td style="padding:5px 6px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="'{:,.2f}'.format(line.sol_total_net_weight)"/>
+        </td>
+        <td style="padding:5px 6px; text-align:center; border:1px solid #ddd;">
+          <t t-esc="'{:,.2f}'.format(line.sol_total_gross_weight)"/>
+        </td>
+      </tr>
+      <t t-set="total_qty" t-value="total_qty + line.product_uom_qty"/>
+      <t t-set="total_net" t-value="total_net + line.sol_total_net_weight"/>
+      <t t-set="total_gross" t-value="total_gross + line.sol_total_gross_weight"/>
+      </t>
+    </t>
+  </tbody>
+
+  <!-- TOTALS ROW -->
+  <tfoot>
+    <tr style="font-weight:bold; background:#f0f0f0; border-top:2px solid #1f6394;">
+      <td colspan="3" style="padding:5px 6px; border:1px solid #ccc; text-align:right;">TOTAL:</td>
+      <td style="padding:5px 6px; text-align:center; border:1px solid #ccc; color:#1f6394;">
+        <t t-esc="'{:,.0f}'.format(total_qty)"/>
+      </td>
+      <td style="padding:5px 6px; text-align:center; border:1px solid #ccc;"/>
+      <td style="padding:5px 6px; text-align:center; border:1px solid #ccc; color:#1f6394;">
+        <t t-esc="'{:,.2f} Kg'.format(total_net)"/>
+      </td>
+      <td style="padding:5px 6px; text-align:center; border:1px solid #ccc; color:#1f6394;">
+        <t t-esc="'{:,.2f} Kg'.format(total_gross)"/>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- AMOUNT IN WORDS (below table)                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div style="margin-bottom:4px; font-size:9.5px;">
+  - <strong>Total Quantity:</strong>
+  <t t-esc="o._int_to_words(int(total_qty), 'Units') + '.'"/>
+</div>
+<div style="margin-bottom:4px; font-size:9.5px;">
+  - <strong>Total Net Weight:</strong>
+  <t t-esc="o._int_to_words(int(total_net), 'Kilograms') + '.'"/>
+</div>
+<div style="margin-bottom:4px; font-size:9.5px;">
+  - <strong>Total Gross Weight:</strong>
+  <t t-esc="o._int_to_words(int(total_gross), 'Kilograms') + '.'"/>
+</div>
+
+</div><!-- /page -->
+</t><!-- /foreach -->
+</t><!-- /html_container -->
+</template>
+</odoo>

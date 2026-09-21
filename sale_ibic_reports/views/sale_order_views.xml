@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- Sale Order Form – Shipping & Reports tab                          -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <record id="sale_order_form_ibic_inherit" model="ir.ui.view">
+    <field name="name">sale.order.form.ibic.reports</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+
+      <xpath expr="//page[@name='order_lines']" position="after">
+        <page string="Shipping Info" name="ibic_shipping">
+
+          <!-- ── Freight Booking ────────────────────────────────────── -->
+          <div style="margin: 0 0 12px 0; display:flex; align-items:center; gap:10px;">
+            <button name="action_create_freight_booking"
+                    string="🚢 Create Booking"
+                    type="object"
+                    class="btn btn-primary btn-sm"
+                    invisible="booking_id != False"
+                    confirm="Create a new freight booking for this sale order?"/>
+            <button name="action_open_freight_booking"
+                    string="📋 Open Booking"
+                    type="object"
+                    class="btn btn-secondary btn-sm"
+                    invisible="not booking_id"/>
+            <field name="booking_id" readonly="1" invisible="not booking_id" nolabel="1"/>
+          </div>
+
+          <!-- ── Transport Details ──────────────────────────────────── -->
+          <group string="Transport Details" col="6">
+            <field name="so_country_of_origin_id" colspan="2"/>
+            <field name="so_board_date"            colspan="2"/>
+            <field name="so_carriage_by"           colspan="2"/>
+            <field name="so_port_of_loading"       colspan="2"/>
+            <field name="so_port_of_discharge"     colspan="2"/>
+            <field name="so_waybill_no"            colspan="2"/>
+            <field name="so_incoterm_id"           colspan="2"/>
+            <field name="so_container_lta"         colspan="2"/>
+            <field name="so_place_of_delivery"     colspan="2"/>
+          </group>
+
+          <!-- ── Packing List ───────────────────────────────────────── -->
+          <group string="Packing List" col="2">
+            <field name="so_bl_number"/>
+          </group>
+
+<!--          <field name="so_packing_line_ids" nolabel="1">-->
+<!--            <list editable="bottom">-->
+<!--              <field name="sequence"           widget="handle"/>-->
+<!--              <field name="container_no"/>-->
+<!--              <field name="item_description"/>-->
+<!--              <field name="origin_country_id"/>-->
+<!--              <field name="qty_cartons"/>-->
+<!--              <field name="unit_weight_kg"/>-->
+<!--              <field name="tare_per_carton"/>-->
+<!--              <field name="total_net_weight"   readonly="1"/>-->
+<!--              <field name="total_gross_weight" readonly="1"/>-->
+<!--            </list>-->
+<!--          </field>-->
+
+          <group col="3">
+            <field name="so_total_cartons"      readonly="1"/>
+            <field name="so_total_net_weight"   readonly="1"/>
+            <field name="so_total_gross_weight" readonly="1"/>
+          </group>
+
+          <!-- ── Invoice Notes ──────────────────────────────────────── -->
+          <group string="Invoice Notes" col="2">
+            <field name="so_payment_note" colspan="2"/>
+            <field name="so_conditions"/>
+            <field name="so_terms" colspan="2"/>
+          </group>
+
+          <!-- ── Bank Details ───────────────────────────────────────── -->
+          <div style="margin: 8px 0 4px 0; display:flex; align-items:center; gap:10px;">
+            <strong>Bank Details</strong>
+            <button name="action_fill_bank_from_company"
+                    string="↺ Reload from Company"
+                    type="object"
+                    class="btn btn-secondary btn-sm"
+                    confirm="This will overwrite the current bank details with the company defaults. Continue?"/>
+          </div>
+
+          <group col="2">
+            <field name="so_bank_id" colspan="2"
+                   options="{'no_create': True, 'no_edit': True}"
+                   help="Select a bank account to auto-fill the fields below"/>
+          </group>
+
+          <group col="4">
+            <field name="so_bank_name"        colspan="2"/>
+            <field name="so_bank_branch"      colspan="2"/>
+            <field name="so_bank_beneficiary" colspan="2"/>
+            <field name="so_bank_account"     colspan="2"/>
+            <field name="so_bank_iban"        colspan="2"/>
+            <field name="so_bank_swift"       colspan="2"/>
+            <field name="so_bank_tel"/>
+            <field name="so_bank_fax"/>
+            <field name="so_bank_address"     colspan="4"/>
+          </group>
+
+          <group string="Shipper Stamp &amp; Signature" col="1">
+            <div>
+              <em style="color:#888; font-size:11px;">
+                Stamp is taken from the Company record.
+                Go to Settings → Companies to update it.
+              </em>
+            </div>
+            <field name="so_shipper_stamp" widget="image"
+                   colspan="1" options="{'size': [200, 120]}"
+                   string="Shipper Stamp (from company)" readonly="1"/>
+          </group>        </page>
+
+        <!-- ── Delivery Packing Lines (read-only, from linked deliveries) ── -->
+        <page string="Delivery Packing" name="ibic_delivery_packing">
+          <div style="margin-bottom:8px; color:#555; font-size:12px;">
+            Packing lines from linked delivery orders (read-only).
+            Open a delivery → Packing Information to edit.
+          </div>
+          <field name="so_delivery_packing_line_ids" nolabel="1" readonly="1">
+            <list>
+              <field name="picking_id"    string="Delivery"/>
+              <field name="container_no"  optional="show"/>
+              <field name="product_id"    optional="show"/>
+              <field name="uom_id"        optional="show"/>
+              <field name="qty"           optional="show"  string="Qty (TON)" digits="[16,3]"/>
+              <field name="qty_cartons"   optional="show"  string="Cartons"/>
+              <field name="pallet_type"   optional="show"/>
+              <field name="pallet_qty"    optional="show"/>
+              <field name="carton_nw_kg"  optional="show"  string="Carton N.W (TON)"/>
+              <field name="carton_gw_kg"  optional="show"  string="Carton G.W (TON)"/>
+              <field name="nw_kg"         optional="show"  string="NW KG"/>
+              <field name="gw_kg"         optional="show"  string="GW KG"/>
+            </list>
+          </field>
+        </page>
+      </xpath>
+
+      <!-- Smart button: Freight Booking -->
+      <xpath expr="//div[@name='button_box']" position="inside">
+        <button name="action_open_freight_booking"
+                type="object"
+                class="oe_stat_button"
+                icon="fa-ship"
+                invisible="not booking_id">
+          <div class="o_field_widget o_stat_info">
+            <span class="o_stat_text">Booking</span>
+            <span class="o_stat_value">
+              <field name="booking_id" readonly="1" nolabel="1"/>
+            </span>
+          </div>
+        </button>
+      </xpath>
+
+      <!-- Add container and origin columns to order lines -->
+      <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="after">
+        <field name="sol_container_no" optional="hide"/>
+        <field name="sol_origin_country_id" optional="hide"/>
+        <field name="sol_unit_weight_kg" optional="hide"/>
+        <field name="sol_total_net_weight" optional="hide" readonly="1"/>
+        <field name="sol_total_gross_weight" optional="hide" readonly="1"/>
+      </xpath>
+
+    </field>
+  </record>
+
+</odoo>

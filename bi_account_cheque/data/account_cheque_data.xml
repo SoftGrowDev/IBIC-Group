@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_update_log_state" model="ir.actions.server">
+        <field name="name">Update Log State</field>
+        <field name="model_id" ref="bi_account_cheque.model_account_cheque"/>
+        <field name="binding_model_id" ref="bi_account_cheque.model_account_cheque"/>
+        <field name="binding_view_types">form,list</field>
+        <field name="state">code</field>
+        <field name="code">action = records._compute_last_log()</field>
+    </record>
+</odoo>

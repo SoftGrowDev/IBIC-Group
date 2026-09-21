@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         LIST VIEW
+    ══════════════════════════════════════════════════════════════════ -->
+    <record id="view_cost_breakdown_list" model="ir.ui.view">
+        <field name="name">cost.breakdown.list</field>
+        <field name="model">cost.breakdown</field>
+        <field name="arch" type="xml">
+            <list string="Estimated Cost Breakdowns"
+                  decoration-muted="state == 'draft'">
+                <field name="name"/>
+                <field name="sale_order_id"/>
+                <field name="customer_id"/>
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="uom_id"/>
+                <field name="sale_price_usd"     string="Sale Price (USD)"/>
+                <field name="sale_price_egp"     string="Sale Price (EGP)"/>
+                <field name="total_cost_usd"     string="Total Cost (USD)"  optional="show"/>
+                <field name="total_cost_egp"     string="Total Cost (EGP)"/>
+                <field name="margin_usd"         string="Margin (USD)"      optional="show"/>
+                <field name="margin_egp"         string="Margin (EGP)"/>
+                <field name="margin_percent_usd" string="Margin % (USD)"    optional="show"
+                       widget="percentage"/>
+                <field name="margin_percent_egp" string="Margin % (EGP)"
+                       widget="percentage"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'confirmed'"
+                       decoration-warning="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         FORM VIEW
+    ══════════════════════════════════════════════════════════════════ -->
+    <record id="view_cost_breakdown_form" model="ir.ui.view">
+        <field name="name">cost.breakdown.form</field>
+        <field name="model">cost.breakdown</field>
+        <field name="arch" type="xml">
+            <form string="Estimated Cost Breakdown">
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="oe_highlight"
+                            invisible="state == 'confirmed'"/>
+                    <button name="action_reset_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <span>Estimated Cost Breakdown – </span>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group col="4">
+                        <field name="customer_id"        readonly="1"/>
+                        <field name="product_id"         readonly="1"/>
+                        <field name="qty"                readonly="1"/>
+                        <field name="uom_id"             readonly="1"/>
+                        <field name="sale_order_id"      readonly="1"/>
+                        <field name="sale_order_line_id" readonly="1"/>
+                        <field name="currency_id"        invisible="1"/>
+                        <field name="sale_price"         readonly="1"
+                               string="Sale Price / unit (USD)"
+                               widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                        <field name="sale_fx_rate"
+                               string="Sale FX Rate (USD → EGP)"/>
+                    </group>
+
+                    <notebook>
+                        <page string="BOM &amp; Cost Components">
+                            <field name="line_ids" widget="editable_list">
+                                <list editable="bottom" string="Components">
+                                    <field name="sequence"   widget="handle"/>
+                                    <field name="type_id"    string="Product Nature"
+                                           options="{'no_create': False}"/>
+                                    <field name="product_id" string="Component"
+                                           required="1"
+                                           options="{'no_create': False}"/>
+                                    <field name="uom_id"     string="UOM"
+                                           optional="show"/>
+                                    <field name="account_id" string="Account"
+                                           options="{'no_create': False}"/>
+                                    <field name="bom_qty"    string="BOM Qty/unit"
+                                           optional="show"/>
+                                    <field name="qty"        string="Total Qty"/>
+                                    <field name="currency_id" string="Currency"
+                                           options="{'no_create': False}"/>
+                                    <field name="fx_rate"    string="FX Rate (→EGP)"/>
+                                    <field name="unit_cost"  string="Unit Cost"/>
+                                    <field name="total"      string="Total"
+                                           readonly="1"/>
+                                    <field name="total_usd"  string="Total (USD)"
+                                           readonly="1"/>
+                                    <field name="total_egp"  string="Total (EGP)"
+                                           readonly="1"/>
+                                    <field name="vendor_id"  string="Vendor"
+                                           optional="show"/>
+                                    <field name="source"     string="Source"
+                                           optional="show"/>
+                                    <field name="note"       string="Note"
+                                           optional="show"/>
+                                </list>
+                            </field>
+
+                            <!-- ── Footer Totals ─────────────────────── -->
+                            <div class="row mt-3 justify-content-end">
+                                <div class="col-lg-5">
+                                    <table class="table table-sm table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:40%"/>
+                                                <th class="text-end text-muted"
+                                                    style="width:30%">USD</th>
+                                                <th class="text-end text-muted"
+                                                    style="width:30%">EGP</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-muted fw-bold">
+                                                    Total Cost
+                                                </td>
+                                                <td class="text-end fw-bold">
+                                                    <field name="total_cost_usd"
+                                                           readonly="1"/>
+                                                </td>
+                                                <td class="text-end fw-bold">
+                                                    <field name="total_cost_egp"
+                                                           readonly="1"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted fw-bold">
+                                                    Sale Price
+                                                </td>
+                                                <td class="text-end fw-bold">
+                                                    <field name="sale_price_usd"
+                                                           readonly="1"/>
+                                                </td>
+                                                <td class="text-end fw-bold">
+                                                    <field name="sale_price_egp"
+                                                           readonly="1"/>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-top">
+                                                <td class="fw-bold">Margin</td>
+                                                <td class="text-end fw-bold">
+                                                    <field name="margin_usd"
+                                                           readonly="1"
+                                                           decoration-danger="margin_usd &lt; 0"
+                                                           decoration-success="margin_usd &gt;= 0"/>
+                                                </td>
+                                                <td class="text-end fw-bold">
+                                                    <field name="margin_egp"
+                                                           readonly="1"
+                                                           decoration-danger="margin_egp &lt; 0"
+                                                           decoration-success="margin_egp &gt;= 0"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Margin %</td>
+                                                <td class="text-end fw-bold">
+                                                    <field name="margin_percent_usd"
+                                                           readonly="1"
+                                                           widget="percentage"
+                                                           decoration-danger="margin_percent_usd &lt; 0"
+                                                           decoration-success="margin_percent_usd &gt;= 0"/>
+                                                </td>
+                                                <td class="text-end fw-bold">
+                                                    <field name="margin_percent_egp"
+                                                           readonly="1"
+                                                           widget="percentage"
+                                                           decoration-danger="margin_percent_egp &lt; 0"
+                                                           decoration-success="margin_percent_egp &gt;= 0"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SEARCH VIEW
+    ══════════════════════════════════════════════════════════════════ -->
+<!--    <record id="view_cost_breakdown_search" model="ir.ui.view">-->
+<!--        <field name="name">cost.breakdown.search</field>-->
+<!--        <field name="model">cost.breakdown</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <search string="Estimated Cost Breakdowns">-->
+<!--                <field name="name"/>-->
+<!--                <field name="sale_order_id"/>-->
+<!--                <field name="customer_id"/>-->
+<!--                <field name="product_id"/>-->
+<!--                <filter name="draft"     string="Draft"-->
+<!--                        domain="[('state','=','draft')]"/>-->
+<!--                <filter name="confirmed" string="Confirmed"-->
+<!--                        domain="[('state','=','confirmed')]"/>-->
+<!--                <group expand="1" string="Group By">-->
+<!--                    <filter name="group_sale_order" string="Sale Order"-->
+<!--                            context="{'group_by': 'sale_order_id'}"/>-->
+<!--                    <filter name="group_customer"   string="Customer"-->
+<!--                            context="{'group_by': 'customer_id'}"/>-->
+<!--                    <filter name="group_product"    string="Product"-->
+<!--                            context="{'group_by': 'product_id'}"/>-->
+<!--                </group>-->
+<!--            </search>-->
+<!--        </field>-->
+<!--    </record>-->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         WINDOW ACTION
+    ══════════════════════════════════════════════════════════════════ -->
+    <record id="action_cost_breakdown" model="ir.actions.act_window">
+        <field name="name">Estimated Cost Breakdowns</field>
+        <field name="res_model">cost.breakdown</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

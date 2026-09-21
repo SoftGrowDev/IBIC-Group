@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_packing_line_user,sale.packing.line user,model_sale_packing_line,sales_team.group_sale_salesman,1,1,1,1
+access_sale_packing_line_manager,sale.packing.line manager,model_sale_packing_line,sales_team.group_sale_salesman_all_leads,1,1,1,1
+access_invoice_packing_line_user,invoice.packing.line user,model_invoice_packing_line,account.group_account_invoice,1,1,1,1
+access_invoice_packing_line_manager,invoice.packing.line manager,model_invoice_packing_line,account.group_account_manager,1,1,1,1
+access_kg_weight_user,kg.weight user,model_kg_weight,base.group_user,1,0,0,0
+access_kg_weight_manager,kg.weight manager,model_kg_weight,base.group_system,1,1,1,1
+access_stock_packing_line_user,stock.packing.line user,model_stock_packing_line,stock.group_stock_user,1,1,1,1
+access_stock_packing_line_manager,stock.packing.line manager,model_stock_packing_line,stock.group_stock_manager,1,1,1,1

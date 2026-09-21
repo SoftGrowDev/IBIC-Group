@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="proforma_invoice_document">
+<t t-call="web.html_container">
+<t t-foreach="docs" t-as="o">
+<div class="page" style="
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #1a1a1a;
+    padding: 0;
+    line-height: 1.9;
+">
+
+<!-- ═══════ HEADER — full-width blue ═══════ -->
+<table width="100%" style="border-collapse:collapse; margin:0; background:#1f6394;">
+  <tr>
+    <td style="padding:16px 24px; vertical-align:middle; width:55%;">
+      <span style="font-size:26px; font-weight:bold; color:#ffffff; letter-spacing:0.8px;">
+        Proforma Invoice
+      </span>
+    </td>
+    <td style="padding:14px 24px; vertical-align:middle; text-align:right; width:45%;">
+      <table style="border-collapse:collapse; display:inline-table; float:right;">
+        <tr>
+          <td style="vertical-align:middle; padding-right:12px;">
+            <t t-if="o.company_id.logo">
+              <img t-att-src="image_data_uri(o.company_id.logo)"
+                   style="max-height:60px; max-width:160px; display:block;
+                          background:#fff; border-radius:4px; padding:3px;" alt=""/>
+            </t>
+          </td>
+          <td style="vertical-align:middle; text-align:left;">
+            <span style="font-size:13px; font-weight:bold; color:#ffffff; display:block; letter-spacing:0.5px;">IBIC Group</span>
+            <span style="font-size:11px; color:#d6eaf8; display:block;">For Industry</span>
+            <span style="font-size:11px; color:#d6eaf8; display:block;">and Investment</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ═══════ DATE ═══════ -->
+<div style="font-size:13px; margin:18px 24px 16px 24px; line-height:2.0;">
+  <strong>Invoice/Bill Date:</strong><br/>
+  <t t-esc="o.date_order.strftime('%d/%m/%Y') if o.date_order else ''"/>
+</div>
+
+<!-- ═══════ SHIPPER | BUYER ═══════ -->
+<table width="100%" style="border-collapse:collapse; margin:0 0 20px 0; font-size:12px;">
+  <tr style="vertical-align:top;">
+
+    <!-- SHIPPER -->
+    <td style="width:50%; padding:0 24px 0 24px; border-right:2px solid #1f6394;">
+      <div style="color:#1f6394; font-size:13px; margin-bottom:10px; font-weight:bold;
+                  border-bottom:2px solid #1f6394; padding-bottom:5px;">
+        Shipper/Consigner
+      </div>
+      <div style="font-size:12px; line-height:1.9;">
+
+        <div style="display:flex; align-items:baseline; padding:2px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Company Name :</span>
+          <span style="font-weight:bold;" t-esc="o.company_id.name"/>
+        </div>
+
+        <t t-if="o.company_id.company_registry">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Commercial Registration :</span>
+            <span t-esc="o.company_id.company_registry"/>
+          </div>
+        </t>
+
+        <t t-if="o.company_id.vat">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Tax Registration :</span>
+            <span t-esc="o.company_id.vat"/>
+          </div>
+        </t>
+
+        <t t-if="o.user_id">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Contact Person :</span>
+            <span t-esc="o.user_id.name"/>
+          </div>
+        </t>
+
+        <t t-set="s_addr" t-value="' '.join(filter(None,[o.company_id.street or '',o.company_id.street2 or '']))"/>
+        <t t-if="s_addr">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Address :</span>
+            <span t-esc="s_addr"/>
+          </div>
+        </t>
+
+        <t t-set="s_city" t-value="', '.join(filter(None,[o.company_id.city or '',o.company_id.state_id.name or '',o.company_id.zip or '']))"/>
+        <t t-if="s_city">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">City, State, ZIP :</span>
+            <span t-esc="s_city"/>
+          </div>
+        </t>
+
+        <t t-if="o.company_id.country_id">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Country :</span>
+            <span t-esc="o.company_id.country_id.name"/>
+          </div>
+        </t>
+
+        <t t-if="o.company_id.phone">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Phone :</span>
+            <span t-esc="o.company_id.phone"/>
+          </div>
+        </t>
+
+        <t t-if="o.company_id.email">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Email :</span>
+            <span t-esc="o.company_id.email"/>
+          </div>
+        </t>
+
+      </div>
+    </td>
+
+    <!-- BUYER -->
+    <td style="width:50%; padding:0 24px 0 24px;">
+      <div style="color:#1f6394; font-size:13px; margin-bottom:10px; font-weight:bold;
+                  border-bottom:2px solid #1f6394; padding-bottom:5px;">
+        Buyer/Consignee
+      </div>
+      <div style="font-size:12px; line-height:1.9;">
+
+        <div style="display:flex; align-items:baseline; padding:2px 0;">
+          <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Company Name :</span>
+          <span style="font-weight:bold;" t-esc="o.partner_id.commercial_partner_id.name"/>
+        </div>
+
+        <t t-set="b_ogrn" t-value="o.partner_id.commercial_partner_id.ref or ''"/>
+        <t t-if="b_ogrn">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">OGRN :</span>
+            <span t-esc="b_ogrn"/>
+          </div>
+        </t>
+
+        <t t-if="o.partner_id.vat">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">INN / KPP :</span>
+            <span t-esc="o.partner_id.vat"/>
+          </div>
+        </t>
+
+        <t t-set="b_contact" t-value="o.partner_id.name if o.partner_id != o.partner_id.commercial_partner_id else ''"/>
+        <t t-if="b_contact">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Contact Person :</span>
+            <span t-esc="b_contact"/>
+          </div>
+        </t>
+
+        <t t-set="b_addr" t-value="' '.join(filter(None,[o.partner_id.street or '',o.partner_id.street2 or '']))"/>
+        <t t-if="b_addr">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Address :</span>
+            <span t-esc="b_addr"/>
+          </div>
+        </t>
+
+        <t t-set="b_city" t-value="', '.join(filter(None,[o.partner_id.city or '',o.partner_id.state_id.name or '',o.partner_id.zip or '']))"/>
+        <t t-if="b_city">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">City, State, ZIP :</span>
+            <span t-esc="b_city"/>
+          </div>
+        </t>
+
+        <t t-if="o.partner_id.country_id">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Country :</span>
+            <span t-esc="o.partner_id.country_id.name"/>
+          </div>
+        </t>
+
+        <t t-if="o.partner_id.phone">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Phone :</span>
+            <span t-esc="o.partner_id.phone"/>
+          </div>
+        </t>
+
+        <t t-if="o.partner_id.email">
+          <div style="display:flex; align-items:baseline; padding:2px 0;">
+            <span style="white-space:nowrap; font-weight:bold; padding-right:8px;">Email :</span>
+            <span t-esc="o.partner_id.email"/>
+          </div>
+        </t>
+
+      </div>
+    </td>
+
+  </tr>
+</table>
+
+<!-- ═══════ SHIPPING INFO GRID ═══════ -->
+<table width="100%" style="border-collapse:collapse; margin:0 0 20px 0; font-size:12px;
+                            border:1px solid #c5d8ec; background:#f4f9fd;">
+  <tr>
+    <td style="width:33%; padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">Country of Origin :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-esc="o.so_country_of_origin_id.name if o.so_country_of_origin_id else ''"/>
+      </div>
+    </td>
+    <td style="width:34%; padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">Boarding Date :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-esc="o.so_board_date.strftime('%d/%m/%Y') if o.so_board_date else ''"/>
+      </div>
+    </td>
+    <td style="width:33%; padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">Carriage By :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-esc="o.so_carriage_by.name if o.so_carriage_by else ''"/>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">Port Of Loading :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-esc="o.so_port_of_loading.name if o.so_port_of_loading else ''"/>
+      </div>
+    </td>
+    <td style="padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">Port of Discharge :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-esc="o.so_port_of_discharge.name if o.so_port_of_discharge else ''"/>
+      </div>
+    </td>
+    <td style="padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">Waybill No. :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-esc="o.so_waybill_no or ''"/>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">Inco Terms :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-if="o.so_incoterm_id">
+          <t t-esc="o.so_incoterm_id.code"/> <t t-esc="o.so_incoterm_id.name"/>
+        </t>
+        <t t-else=""/>
+      </div>
+    </td>
+    <td style="padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">CONTAINER/LTA :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-esc="o.so_container_lta or ''"/>
+      </div>
+    </td>
+    <td style="padding:10px 14px; vertical-align:middle; text-align:center;">
+      <div style="color:#1f6394; font-weight:bold; font-size:12px;">Place Of Delivery :</div>
+      <div style="font-size:12px; margin-top:3px;">
+        <t t-esc="o.so_place_of_delivery or ''"/>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- ═══════ PRODUCT TABLE ═══════ -->
+<t t-set="has_packing" t-value="bool(o.so_delivery_packing_line_ids)"/>
+<t t-set="lb_mode" t-value="o._ibic_proforma_lb_mode()"/>
+
+<table width="100%" style="border-collapse:collapse; margin-bottom:20px; font-size:12px;">
+  <thead>
+    <tr style="background:#1f6394; color:#fff;">
+      <th style="padding:10px 12px; text-align:left;   border:1px solid #155080; width:36%;">DESCRIPTION OF PRODUCT</th>
+      <th style="padding:10px 12px; text-align:center; border:1px solid #155080; width:11%;">Ton Price</th>
+      <th style="padding:10px 12px; text-align:center; border:1px solid #155080; width:11%;">
+        <t t-if="lb_mode">LB Price</t><t t-else="">Carton Price</t>
+      </th>
+      <th style="padding:10px 12px; text-align:center; border:1px solid #155080; width:15%;">QTY Total Net weight/Ton</th>
+      <th style="padding:10px 12px; text-align:center; border:1px solid #155080; width:13%;">
+        <t t-if="lb_mode">LB Quantity</t><t t-else="">QTY Total Cartons</t>
+      </th>
+      <th style="padding:10px 12px; text-align:right;  border:1px solid #155080; width:14%;">TOTAL Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <t t-if="has_packing">
+      <t t-foreach="o.so_delivery_packing_line_ids" t-as="pline">
+        <t t-set="srcline" t-value="pline.move_id.sale_line_id"/>
+        <t t-set="desc" t-value="pline.product_id.display_name"/>
+        <t t-set="desc_sale" t-value="srcline.product_id.description_sale if srcline else ''"/>
+        <t t-call="sale_ibic_reports.proforma_row_cells"/>
+      </t>
+    </t>
+    <t t-else="">
+      <t t-foreach="o.order_line" t-as="line">
+        <t t-if="not line.display_type">
+          <t t-set="srcline" t-value="line"/>
+          <t t-set="desc" t-value="line.product_id.display_name"/>
+          <t t-set="desc_sale" t-value="line.product_id.display_name"/>
+          <t t-call="sale_ibic_reports.proforma_row_cells"/>
+        </t>
+      </t>
+    </t>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5" style="padding:10px 12px; font-weight:bold; font-size:13px;
+                              text-align:right; background:#1f6394; color:#fff; border:1px solid #155080;">
+        Total
+      </td>
+      <td style="padding:10px 12px; font-weight:bold; font-size:13px;
+                 text-align:right; background:#1f6394; color:#fff; border:1px solid #155080;">
+        <t t-esc="'$ {:,.2f}'.format(o.amount_total)"/>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- ═══════ BOTTOM BLOCK ═══════ -->
+<table width="100%" style="border-collapse:collapse; font-size:12px; margin-bottom:20px;">
+  <tr style="vertical-align:top;">
+
+    <!-- LEFT -->
+    <td style="width:50%; padding:0 24px 0 24px;">
+      <t t-if="o.so_amount_in_words">
+        <div style="margin-bottom:18px;">
+          <span style="color:#1f6394; font-weight:bold; text-decoration:underline; font-size:15px;">Amount In Words:</span><br/>
+          <span style="font-size:14px;" t-esc="o.so_amount_in_words"/>
+        </div>
+      </t>
+      <br/>
+      <t t-if="o.so_conditions">
+        <div style="margin-bottom:18px; font-size:15px;">
+          <span style="color:#1f6394; font-weight:bold;">Conditions:</span>
+          <span t-esc="o.so_conditions"/>
+        </div>
+      </t>
+      <t t-if="o.payment_term_id">
+        <div style="margin-bottom:18px; font-size:12px;">
+          <span style="color:#1f6394; font-weight:bold;">Payment Term:</span>
+          <span t-esc="o.payment_term_id.name"/>
+        </div>
+      </t>
+      <t t-if="o.so_terms">
+        <div style="margin-bottom:18px; font-size:12px;">
+          <span style="color:#1f6394; font-weight:bold;">Terms &amp; Conditions:</span><br/>
+          <span t-esc="o.so_terms"/>
+        </div>
+      </t>
+    </td>
+
+    <!-- RIGHT: Bank Details — from so_bank_id, fallback to so_bank_* fields -->
+    <td style="width:50%; padding:0 24px 0 24px;">
+      <!-- Resolve values: so_bank_id takes priority over company fields -->
+      <t t-set="bk_name"  t-value="o.so_bank_id.bank_id.name        or o.so_bank_name        or ''"/>
+      <t t-set="bk_bene"  t-value="o.so_bank_id.partner_id.name     or o.so_bank_beneficiary or ''"/>
+      <t t-set="bk_branch" t-value="o.so_bank_branch or ''"/>
+      <t t-set="bk_acc"   t-value="o.so_bank_id.acc_number          or o.so_bank_account     or ''"/>
+      <t t-set="bk_iban"  t-value="o.so_bank_id.acc_number          or o.so_bank_iban        or ''"/>
+      <t t-set="bk_swift" t-value="o.so_bank_id.bank_id.bic         or o.so_bank_swift       or ''"/>
+      <t t-set="bk_tel"   t-value="o.so_bank_tel   or ''"/>
+      <t t-set="bk_fax"   t-value="o.so_bank_fax   or ''"/>
+      <t t-set="bk_addr"  t-value="o.so_bank_address or ''"/>
+      <t t-if="bk_name or bk_bene or bk_acc or o.so_bank_id">
+        <span style="color:#1f6394; font-weight:bold; text-decoration:underline; font-size:13px;">Bank Details:</span>
+        <table style="border-collapse:collapse; width:100%; font-size:12px; margin-top:8px; line-height:2.2;">
+          <t t-if="bk_name">
+            <tr>
+              <td style="white-space:nowrap; font-weight:bold; padding-right:10px; width:40%;">Bank Name:</td>
+              <td t-esc="bk_name"/>
+            </tr>
+          </t>
+          <t t-if="bk_bene">
+            <tr>
+              <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Beneficiary:</td>
+              <td t-esc="bk_bene"/>
+            </tr>
+          </t>
+          <t t-if="bk_branch">
+            <tr>
+              <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Branch:</td>
+              <td t-esc="bk_branch"/>
+            </tr>
+          </t>
+          <t t-if="bk_acc">
+            <tr>
+              <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Account Number:</td>
+              <td t-esc="bk_acc"/>
+            </tr>
+          </t>
+          <t t-if="bk_iban">
+            <tr>
+              <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">IBAN:</td>
+              <td t-esc="bk_iban"/>
+            </tr>
+          </t>
+          <t t-if="bk_swift">
+            <tr>
+              <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">SWIFT Code:</td>
+              <td t-esc="bk_swift"/>
+            </tr>
+          </t>
+          <!-- Tel / Fax / Address always shown as labels -->
+          <tr>
+            <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Tel:</td>
+            <td t-esc="bk_tel"/>
+          </tr>
+          <tr>
+            <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Fax:</td>
+            <td t-esc="bk_fax"/>
+          </tr>
+          <tr>
+            <td style="white-space:nowrap; font-weight:bold; padding-right:10px;">Address:</td>
+            <td t-esc="bk_addr"/>
+          </tr>
+        </table>
+      </t>
+    </td>
+
+  </tr>
+</table>
+
+<!-- ═══════ SHIPPER STAMP ═══════ -->
+<table width="100%" style="border-collapse:collapse; font-size:12px; margin-top:30px;">
+  <tr>
+    <td style="width:50%; padding:0 24px; vertical-align:top;">
+      <span style="color:#1f6394; font-weight:bold; text-decoration:underline; font-size:13px;">
+        Shipper Signature &amp; Stamp:
+      </span>
+      <t t-if="o.so_shipper_stamp">
+        <br/>
+        <img t-att-src="image_data_uri(o.so_shipper_stamp)"
+             style="max-height:110px; max-width:240px; margin-top:10px;" alt=""/>
+      </t>
+      <t t-else="">
+        <div style="margin-top:48px; border-top:1px solid #999; width:85%;"/>
+      </t>
+    </td>
+    <td style="width:50%; padding:0 24px;"/>
+  </tr>
+</table>
+
+</div>
+</t>
+</t>
+</template>
+
+<template id="proforma_row_cells">
+  <t t-set="row" t-value="srcline._ibic_proforma_row() if srcline else {}"/>
+  <tr>
+    <td style="padding:10px 12px; border:1px solid #e0e0e0; line-height:1.7;">
+      <t t-esc="desc"/>
+<!--      <t t-if="desc_sale">-->
+<!--        <br/><small style="color:#555;" t-esc="desc_sale"/>-->
+<!--      </t>-->
+    </td>
+    <td style="padding:10px 12px; text-align:center; border:1px solid #e0e0e0;">
+      <t t-esc="row.get('ton_price', '')"/>
+    </td>
+    <td style="padding:10px 12px; text-align:center; border:1px solid #e0e0e0;">
+      <t t-if="lb_mode"><t t-esc="row.get('lb_price', '')"/></t>
+      <t t-else=""><t t-esc="row.get('carton_price', '')"/></t>
+    </td>
+    <td style="padding:10px 12px; text-align:center; border:1px solid #e0e0e0;">
+      <t t-esc="row.get('net_weight_ton', '')"/>
+    </td>
+    <td style="padding:10px 12px; text-align:center; border:1px solid #e0e0e0;">
+      <t t-if="lb_mode"><t t-esc="row.get('lb_qty', '')"/></t>
+      <t t-else=""><t t-esc="row.get('total_cartons', '')"/></t>
+    </td>
+    <td style="padding:10px 12px; text-align:right; border:1px solid #e0e0e0;">
+      <t t-esc="row.get('total', '')"/>
+    </td>
+  </tr>
+</template>
+</odoo>
